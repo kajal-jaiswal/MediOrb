@@ -1,0 +1,170 @@
+<div class="doc-layout">
+
+  <!-- ── Header ─────────────────────────────────── -->
+  <div class="doc-header">
+    <div class="doc-brand">
+      <span class="doc-icon">&#128084;</span>
+      <div>
+        <h1 class="doc-title">Doctor Dashboard</h1>
+        <p class="doc-sub">Live patient queue · MediOrb AI Triage</p>
+      </div>
+    </div>
+    <div class="conn-pill" [class.conn-live]="isConnected()" [class.conn-off]="!isConnected()">
+      <span class="conn-dot"></span>
+      {{ isConnected() ? 'Live' : 'Connecting…' }}
+    </div>
+  </div>
+
+  <!-- ── Stats row ───────────────────────────────── -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <p class="stat-val">{{ totalWaiting() }}</p>
+      <p class="stat-label">Waiting</p>
+    </div>
+    <div class="stat-card stat-emergency">
+      <p class="stat-val" style="color:#EF4444">{{ emergencies() }}</p>
+      <p class="stat-label">&#128680; Emergency</p>
+    </div>
+    <div class="stat-card stat-high">
+      <p class="stat-val" style="color:#F97316">{{ highPriority() }}</p>
+      <p class="stat-label">&#128308; High Priority</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-val" style="color:#818CF8">{{ inProgress() }}</p>
+      <p class="stat-label">&#128203; In Progress</p>
+    </div>
+  </div>
+
+  <!-- ── Main pane (queue + detail) ────────────────── -->
+  <div class="main-pane">
+
+    <!-- Queue list -->
+    <div class="queue-pane">
+      <!-- Loading skeleton -->
+      <div *ngIf="loadingQueue()" class="loading-msg">
+        <span class="spinner">&#8635;</span> Loading queue…
+      </div>
+
+      <!-- Empty state -->
+      <div *ngIf="!loadingQueue() && sortedQueue().length === 0" class="empty-state">
+        <div class="empty-icon">&#128084;</div>
+        <p class="empty-title">No patients in queue</p>
+        <p class="empty-sub">Patients will appear here instantly as they complete kiosk check-in.</p>
+      </div>
+
+      <!-- Queue items -->
+      <div *ngFor="let p of sortedQueue()"
+           class="queue-item"
+           [class.item-selected]="selected()?.appointmentId === p.appointmentId"
+           [class.item-inprogress]="p.status === 'InProgress'"
+           (click)="selectPatient(p)">
+
+        <!-- Urgency stripe -->
+        <div class="urgency-stripe" [style.background]="urgencyColor(p.urgencyLevel)"></div>
+
+        <div class="item-body">
+          <div class="item-top">
+            <div class="item-name">{{ p.patientName }}</div>
+            <span class="urgency-badge"
+                  [style.color]="urgencyColor(p.urgencyLevel)"
+                  [style.border-color]="urgencyColor(p.urgencyLevel) + '44'"
+                  [style.background]="urgencyColor(p.urgencyLevel) + '18'">
+              {{ p.urgencyLevel }}
+            </span>
+          </div>
+          <div class="item-meta">
+            {{ p.age }} yrs · {{ p.gender }} ·
+            <span class="item-time">{{ timeSince(p.checkedInAt) }}</span>
+          </div>
+          <div class="item-symptoms">{{ p.symptoms | slice:0:80 }}{{ p.symptoms.length > 80 ? '…' : '' }}</div>
+          <div class="item-doctor">&#128100; {{ p.doctorName }}</div>
+        </div>
+
+        <!-- Status pill -->
+        <span class="status-pill"
+              [class.pill-waiting]="p.status === 'Waiting'"
+              [class.pill-inprogress]="p.status === 'InProgress'">
+          {{ p.status === 'InProgress' ? '● In Progress' : '○ Waiting' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Detail panel -->
+    <div class="detail-pane" [class.detail-open]="selected()">
+      <ng-container *ngIf="selected() as p">
+
+        <div class="detail-header">
+          <div>
+            <h2 class="detail-name">{{ p.patientName }}</h2>
+            <p class="detail-meta">{{ p.patientId }} · {{ p.age }} yrs · {{ p.gender }}</p>
+          </div>
+          <button class="close-btn" (click)="closeDetail()">&#10005;</button>
+        </div>
+
+        <!-- Urgency -->
+        <div class="detail-urgency" [style.border-color]="urgencyColor(p.urgencyLevel) + '55'">
+          <span class="urgency-dot" [style.background]="urgencyColor(p.urgencyLevel)"></span>
+          <span [style.color]="urgencyColor(p.urgencyLevel)" class="urgency-label">{{ p.urgencyLevel }} Priority</span>
+          <span class="wait-badge">&#128336; {{ p.estimatedWaitTime }}</span>
+        </div>
+
+        <!-- Symptoms -->
+        <div class="detail-section">
+          <p class="section-label">&#128203; Reported Symptoms</p>
+          <p class="section-text">{{ p.symptoms }}</p>
+        </div>
+
+        <!-- Doctor -->
+        <div class="detail-section">
+          <p class="section-label">&#128100; Assigned Doctor</p>
+          <p class="section-text fw-bold">{{ p.doctorName }}</p>
+          <p class="section-text text-muted">{{ p.doctorSpecialty }}</p>
+        </div>
+
+        <!-- AI Reasoning -->
+        <div class="detail-section">
+          <p class="section-label">&#129504; AI Reasoning</p>
+          <p class="section-text">{{ p.reasoning }}</p>
+        </div>
+
+        <!-- Suggested Tests -->
+        <div *ngIf="p.suggestedTests?.length" class="detail-section">
+          <p class="section-label">&#129514; Suggested Tests</p>
+          <div class="tests-row">
+            <span *ngFor="let t of p.suggestedTests" class="test-chip">{{ t }}</span>
+          </div>
+        </div>
+
+        <!-- Additional notes -->
+        <div *ngIf="p.additionalNotes" class="detail-notes">
+          <span>&#9888;</span>
+          <p>{{ p.additionalNotes }}</p>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="action-row">
+          <button class="action-btn btn-call"
+                  [disabled]="p.status === 'InProgress' || !!actionLoading()"
+                  (click)="callPatient(p)">
+            <span *ngIf="actionLoading() === p.appointmentId" class="spinner">&#8635;</span>
+            <span>&#128222; Call Patient</span>
+          </button>
+
+          <button class="action-btn btn-complete"
+                  [disabled]="!!actionLoading()"
+                  (click)="completeConsult(p)">
+            <span>&#10003; Complete</span>
+          </button>
+
+          <button class="action-btn btn-transfer"
+                  [disabled]="!!actionLoading()"
+                  (click)="transfer(p)">
+            <span>&#8680; Transfer</span>
+          </button>
+        </div>
+
+      </ng-container>
+    </div>
+  </div>
+
+</div>

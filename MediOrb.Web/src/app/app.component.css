@@ -1,0 +1,28 @@
+/* Layout */
+.kiosk-main {
+  position: relative;
+  z-index: 1;
+  min-height: calc(100vh - 64px - 44px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 88px 16px 32px; /* 88px = 64px header + 24px gap */
+}
+
+.kiosk-card {
+  width: 100%;
+  max-width: 480px;
+  padding: 28px 24px;
+  border-radius: 24px;
+}
+
+/* Footer */
+.kiosk-footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 8px 16px 20px;
+  font-size: 11px;
+  color: #3f3f46;
+}
+.kiosk-footer strong { color: #52525b; }

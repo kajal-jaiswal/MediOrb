@@ -1,0 +1,76 @@
+<div class="ret-wrap">
+
+  <!-- Back -->
+  <button class="back-btn" (click)="back()">&#8592; Back</button>
+
+  <div class="ret-header">
+    <div class="icon-ring">&#128100;</div>
+    <h2 class="ret-title">Returning Patient</h2>
+    <p class="ret-sub">Enter your Patient ID (PAT-XXXXX) or registered mobile number</p>
+  </div>
+
+  <!-- Search input -->
+  <div class="search-wrap" [class.search-error]="lookupState() === 'not-found'">
+    <span class="search-icon">&#128269;</span>
+    <input
+      class="search-input"
+      type="text"
+      [(ngModel)]="query"
+      placeholder="PAT-XXXXXXXX  or  9876543210"
+      (keydown)="onEnter($event)"
+      [disabled]="lookupState() === 'searching'"
+      autocomplete="off"
+      autocorrect="off"
+      spellcheck="false">
+  </div>
+
+  <!-- Search button -->
+  <button class="btn btn-primary search-btn"
+          [disabled]="!canSearch"
+          (click)="search()">
+    <span *ngIf="lookupState() === 'searching'" class="spinner">&#8635;</span>
+    <span>{{ lookupState() === 'searching' ? 'Searching…' : 'Find My Record' }}</span>
+  </button>
+
+  <!-- Not found message -->
+  <div *ngIf="lookupState() === 'not-found'" class="feedback-card card-warn">
+    <span>&#9888;</span>
+    <div>
+      <p class="feedback-title">No record found</p>
+      <p class="feedback-sub">No patient matches "{{ query }}". Please check your ID / phone number, or register as a new patient.</p>
+    </div>
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="lookupState() === 'error'" class="feedback-card card-error">
+    <span>&#9888;</span>
+    <p class="feedback-sub">{{ errorMsg }}</p>
+  </div>
+
+  <!-- Found card -->
+  <div *ngIf="foundPatient() as p" class="found-card">
+    <div class="found-header">
+      <span class="found-check">&#10003;</span>
+      <div>
+        <p class="found-name">{{ p.name }}</p>
+        <p class="found-meta">{{ p.age }} yrs · {{ p.gender }} · {{ p.contact }}</p>
+        <p class="found-id">{{ p.patientId }}</p>
+      </div>
+    </div>
+
+    <div *ngIf="p.previousSymptoms" class="prev-symptoms">
+      <p class="prev-label">&#128203; Last visit</p>
+      <p class="prev-text">{{ p.previousSymptoms }}</p>
+    </div>
+
+    <button class="btn btn-primary proceed-btn" (click)="proceed()">
+      Continue to Symptoms &#8594;
+    </button>
+  </div>
+
+  <!-- Register new link -->
+  <button class="btn btn-ghost new-btn" (click)="registerNew()">
+    New patient? Register here &#8594;
+  </button>
+
+</div>

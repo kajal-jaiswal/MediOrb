@@ -1,0 +1,86 @@
+<app-step-indicator [currentStep]="2"></app-step-indicator>
+
+<div class="sym-wrap">
+
+  <!-- Triage error banner -->
+  <div *ngIf="triageError" class="error-banner">
+    &#9888; {{ triageError }}
+  </div>
+
+  <!-- Orb (clickable) -->
+  <div class="orb-area" (click)="toggleVoice()" [title]="isListening ? 'Stop listening' : 'Tap to speak'">
+    <app-ai-orb [orbState]="orbState" [size]="120"></app-ai-orb>
+  </div>
+
+  <!-- Heading -->
+  <h2 class="sym-title">{{ t().title }}</h2>
+  <p class="sym-greeting">&ldquo;{{ greeting }}&rdquo;</p>
+
+  <!-- Textarea -->
+  <div class="textarea-wrap" [class.listening-border]="isListening" [class.error-border]="inputError">
+    <textarea
+      class="sym-textarea"
+      rows="5"
+      [(ngModel)]="symptomsText"
+      [placeholder]="t().placeholder"
+      [disabled]="isAnalyzing"
+      maxlength="1000"
+      (ngModelChange)="inputError = symptomsText.length >= 10 ? '' : inputError">
+    </textarea>
+    <div class="textarea-bar">
+      <span class="bar-status" [class.listening-text]="isListening">
+        <span *ngIf="isListening" class="pulse-dot"></span>
+        {{ isListening ? t().listenLabel : t().idleLabel }}
+      </span>
+      <span class="bar-count" [class.warn-count]="symptomsText.length > 900">
+        {{ symptomsText.length }} / 1000
+      </span>
+    </div>
+  </div>
+
+  <!-- Input validation error -->
+  <p *ngIf="inputError" class="input-error">&#9888; {{ inputError }}</p>
+  <p *ngIf="speechError" class="input-error">&#9888; {{ speechError }}</p>
+
+  <!-- Quick-select chips -->
+  <div class="chips-section">
+    <p class="chips-label">Quick select</p>
+    <div class="chips-row">
+      <button *ngFor="let tag of t().quickSelect"
+              class="chip"
+              (click)="addChip(tag)"
+              [disabled]="isAnalyzing">
+        {{ tag }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls-row">
+    <!-- Mic button -->
+    <button *ngIf="speech.supported" class="ctrl-btn"
+            [class.mic-listening]="isListening"
+            (click)="toggleVoice()"
+            [disabled]="isAnalyzing"
+            [title]="isListening ? 'Stop' : 'Start voice'">
+      <span *ngIf="isListening">&#x1F3A4;&#xFE0F;</span>
+      <span *ngIf="!isListening">&#127897;</span>
+    </button>
+
+    <!-- Analyze button -->
+    <button class="btn btn-primary analyze-btn"
+            (click)="analyze()"
+            [disabled]="!symptomsText.trim() || isAnalyzing">
+      <span *ngIf="isAnalyzing" class="spinner">&#8635;</span>
+      <span>{{ isAnalyzing ? t().analyzing : t().btn }}</span>
+    </button>
+
+    <!-- Clear button -->
+    <button class="ctrl-btn" (click)="clearInput()"
+            [disabled]="isAnalyzing || (!symptomsText && !isListening)"
+            title="Clear">
+      &#8635;
+    </button>
+  </div>
+
+</div>

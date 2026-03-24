@@ -1,0 +1,75 @@
+<app-step-indicator [currentStep]="1" [labels]="stepLabels()"></app-step-indicator>
+
+<div class="reg-wrap">
+  <div class="reg-header">
+    <h2 class="reg-title">{{ t().title }}</h2>
+    <p class="reg-sub">{{ t().subtitle }}</p>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="reg-form">
+
+    <!-- Full Name -->
+    <div class="field-group">
+      <label class="field-label">{{ t().name }}</label>
+      <div class="field-rel">
+        <span class="field-icon-abs">&#128100;</span>
+        <input type="text" class="field-input" [class.is-error]="fieldError('name')"
+               formControlName="name" [placeholder]="t().namePlaceholder" autocomplete="name" maxlength="100">
+      </div>
+      <p *ngIf="fieldError('name')" class="f-error">&#9888; {{ fieldError('name') }}</p>
+    </div>
+
+    <!-- Age + Gender -->
+    <div class="row-2col">
+      <div class="field-group">
+        <label class="field-label">{{ t().age }}</label>
+        <div class="field-rel">
+          <span class="field-icon-abs">#</span>
+          <input type="number" class="field-input" [class.is-error]="fieldError('age')"
+                 formControlName="age" [placeholder]="t().agePlaceholder" min="1" max="120">
+        </div>
+        <p *ngIf="fieldError('age')" class="f-error">&#9888; {{ fieldError('age') }}</p>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">{{ t().gender }}</label>
+        <select class="field-input no-icon" formControlName="gender">
+          <option value="male">{{ t().genderMale }}</option>
+          <option value="female">{{ t().genderFemale }}</option>
+          <option value="other">{{ t().genderOther }}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Phone -->
+    <div class="field-group">
+      <label class="field-label">{{ t().contact }}</label>
+      <div class="phone-row">
+        <div class="phone-prefix">+91</div>
+        <div class="field-rel" style="flex:1">
+          <span class="field-icon-abs">&#128241;</span>
+          <input type="tel" class="field-input" [class.is-error]="fieldError('contact')"
+                 formControlName="contact" [placeholder]="t().contactPlaceholder"
+                 maxlength="10" inputmode="numeric" autocomplete="tel"
+                 (input)="onPhoneInput($event)">
+        </div>
+      </div>
+      <p *ngIf="fieldError('contact')" class="f-error">&#9888; {{ fieldError('contact') }}</p>
+    </div>
+
+    <!-- Email (optional) -->
+    <div class="field-group">
+      <label class="field-label">{{ t().email }}</label>
+      <div class="field-rel">
+        <span class="field-icon-abs">&#9993;</span>
+        <input type="email" class="field-input" [class.is-error]="fieldError('email')"
+               formControlName="email" [placeholder]="t().emailPlaceholder" autocomplete="email">
+      </div>
+      <p *ngIf="fieldError('email')" class="f-error">&#9888; {{ fieldError('email') }}</p>
+    </div>
+
+    <button type="submit" class="btn btn-primary submit-btn">
+      {{ t().btn }} &#8250;
+    </button>
+  </form>
+</div>

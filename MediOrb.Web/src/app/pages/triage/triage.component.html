@@ -1,0 +1,72 @@
+<app-step-indicator [currentStep]="3"></app-step-indicator>
+
+<!-- Loading state -->
+<div *ngIf="isAnalyzing()" class="loading-wrap">
+  <app-ai-orb orbState="processing" [size]="140"></app-ai-orb>
+  <h2 class="loading-title">{{ t().loadingTitle }}</h2>
+  <p class="loading-sub">{{ t().loadingSubtitle }}</p>
+  <div class="dots-row">
+    <span class="dot" style="animation-delay:0s"></span>
+    <span class="dot" style="animation-delay:0.22s"></span>
+    <span class="dot" style="animation-delay:0.44s"></span>
+  </div>
+</div>
+
+<!-- Result state -->
+<div *ngIf="result() as r" class="result-wrap">
+
+  <!-- Header row -->
+  <div class="result-header">
+    <div>
+      <h2 class="result-title">{{ t().title }}</h2>
+      <p class="result-sub">{{ t().subtitle }}</p>
+    </div>
+    <span class="badge border" [ngClass]="getUrgencyStyle(r.urgencyLevel).badge">
+      <span class="urgency-dot" [style.background]="getUrgencyStyle(r.urgencyLevel).dot"></span>
+      {{ getUrgencyStyle(r.urgencyLevel).label }}
+    </span>
+  </div>
+
+  <!-- Doctor card -->
+  <div class="glass card-section">
+    <div class="doctor-row">
+      <div class="doctor-avatar">&#128100;</div>
+      <div class="doctor-info">
+        <p class="section-label">{{ t().doctorLabel }}</p>
+        <h3 class="doctor-name">{{ r.recommendedDoctor.name }}</h3>
+        <p class="doctor-specialty">{{ r.recommendedDoctor.specialty }}</p>
+        <div class="doctor-meta">
+          <span class="meta-item">&#128205; {{ r.recommendedDoctor.floor }} &middot; {{ r.recommendedDoctor.room }}</span>
+          <span class="meta-item">&#128336; {{ t().waitLabel }}: {{ r.estimatedWaitTime }}</span>
+        </div>
+      </div>
+      <span class="avail-pill" [class.avail-yes]="r.recommendedDoctor.available" [class.avail-no]="!r.recommendedDoctor.available">
+        {{ r.recommendedDoctor.available ? t().availableLabel : t().busyLabel }}
+      </span>
+    </div>
+  </div>
+
+  <!-- AI Reasoning -->
+  <div class="glass card-section card-indigo">
+    <p class="section-label">{{ t().reasoningLabel }}</p>
+    <p class="reasoning-text">{{ r.reasoning }}</p>
+  </div>
+
+  <!-- Suggested Tests -->
+  <div *ngIf="r.suggestedTests && r.suggestedTests.length > 0" class="glass card-section">
+    <p class="section-label">&#129514; {{ t().testsLabel }}</p>
+    <div class="tests-row">
+      <span *ngFor="let test of r.suggestedTests" class="test-chip">{{ test }}</span>
+    </div>
+  </div>
+
+  <!-- Additional notes -->
+  <div *ngIf="r.additionalNotes" class="notes-card">
+    <span class="notes-icon">&#9888;</span>
+    <p class="notes-text">{{ r.additionalNotes }}</p>
+  </div>
+
+  <button class="btn btn-primary confirm-btn" (click)="confirm()">
+    {{ t().btn }} &#8594;
+  </button>
+</div>

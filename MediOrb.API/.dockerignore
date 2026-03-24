@@ -1,0 +1,19 @@
+# Ignore local build artifacts
+bin/
+obj/
+
+# Ignore IDE settings
+.vs/
+.vscode/
+
+# Ignore local configuration files
+appsettings.json
+appsettings.Development.json
+
+# Ignore source control
+.git/
+.gitignore
+
+# Ignore logs and temp files
+*.log
+tmp/

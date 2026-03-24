@@ -1,0 +1,76 @@
+<div class="orb-wrap" [style.width.px]="size" [style.height.px]="size" [@orbGlow]="orbState">
+
+  <!-- Ambient glow -->
+  <div class="orb-glow"
+       [class.glow-idle]="orbState === 'idle'"
+       [class.glow-listening]="orbState === 'listening'"
+       [class.glow-processing]="orbState === 'processing'"
+       [class.glow-speaking]="orbState === 'speaking'"
+       [class.glow-success]="orbState === 'success'">
+  </div>
+
+  <!-- Pulse ring -->
+  <div *ngIf="orbState === 'listening' || orbState === 'processing' || orbState === 'speaking'"
+       class="orb-ring"
+       [class.ring-rose]="orbState === 'listening'"
+       [class.ring-violet]="orbState === 'processing'"
+       [class.ring-cyan]="orbState === 'speaking'">
+  </div>
+
+  <!-- Spinning arc (processing) -->
+  <div *ngIf="orbState === 'processing'" class="orb-arc"></div>
+
+  <!-- Ripple rings (speaking) -->
+  <div *ngIf="orbState === 'speaking'" class="speak-ring speak-ring-1"></div>
+  <div *ngIf="orbState === 'speaking'" class="speak-ring speak-ring-2"></div>
+
+  <!-- Main sphere -->
+  <div class="orb-body"
+       [class.body-idle]="orbState === 'idle'"
+       [class.body-listening]="orbState === 'listening'"
+       [class.body-processing]="orbState === 'processing'"
+       [class.body-speaking]="orbState === 'speaking'"
+       [class.body-success]="orbState === 'success'"
+       [style.box-shadow]="'0 0 ' + (size * 0.25) + 'px ' + orbColors.glow">
+
+    <!-- Inner light -->
+    <div class="inner-light inner-light-a"></div>
+    <div class="inner-light inner-light-b"></div>
+
+    <!-- Waveform: listening -->
+    <div *ngIf="orbState === 'listening'" class="orb-content">
+      <div class="waveform">
+        <div *ngFor="let h of bars; let i = index"
+             class="wave-bar"
+             [style.animation-delay]="(i * 0.09) + 's'"
+             [style.animation-duration]="(0.55 + i * 0.06) + 's'">
+        </div>
+      </div>
+    </div>
+
+    <!-- Speaking waveform (wider, cyan tint) -->
+    <div *ngIf="orbState === 'speaking'" class="orb-content">
+      <div class="waveform speaking-wave">
+        <div *ngFor="let h of speakBars; let i = index"
+             class="wave-bar speak-bar"
+             [style.animation-delay]="(i * 0.07) + 's'"
+             [style.animation-duration]="(0.4 + i * 0.05) + 's'">
+        </div>
+      </div>
+    </div>
+
+    <!-- Dots: processing -->
+    <div *ngIf="orbState === 'processing'" class="orb-content">
+      <div class="dots-row">
+        <div class="dot" style="animation-delay:0s"></div>
+        <div class="dot" style="animation-delay:0.22s"></div>
+        <div class="dot" style="animation-delay:0.44s"></div>
+      </div>
+    </div>
+
+    <!-- Check: success -->
+    <div *ngIf="orbState === 'success'" class="orb-content check-icon">✓</div>
+
+    <div class="orb-glare"></div>
+  </div>
+</div>

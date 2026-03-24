@@ -1,0 +1,24 @@
+# .NET Core
+bin/
+obj/
+*.user
+*.userosscache
+*.sln.docstates
+appsettings.json
+appsettings.Development.json
+
+# Angular
+node_modules/
+dist/
+.angular/
+.vscode/
+.idea/
+.DS_Store
+
+# Logs
+*.log
+
+# SQLite
+*.db
+*.db-shm
+*.db-wal

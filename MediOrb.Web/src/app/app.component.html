@@ -1,0 +1,19 @@
+<!-- Header always visible -->
+<app-kiosk-header></app-kiosk-header>
+
+<!-- Doctor Dashboard: full-width, no card wrapper -->
+<ng-container *ngIf="isDoctorPage()">
+  <router-outlet></router-outlet>
+</ng-container>
+
+<!-- Kiosk flow: centered card layout -->
+<ng-container *ngIf="!isDoctorPage()">
+  <main class="kiosk-main">
+    <div class="kiosk-card glass">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+  <footer class="kiosk-footer">
+    <span>Powered by <strong>Groq</strong> &middot; Llama 3 &middot; Angular 17</span>
+  </footer>
+</ng-container>

@@ -1,0 +1,6 @@
+@MediOrb.API_HostAddress = http://localhost:5115
+
+GET {{MediOrb.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,168 @@
+/* ─── Design Tokens ──────────────────────────────── */
+:root {
+  --bg-base: #0A0F1C;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-active: rgba(99, 102, 241, 0.5);
+  --text-primary: #ffffff;
+  --text-muted: #A1A1AA;
+  --accent: #6366F1;
+  --accent-light: #818CF8;
+  --accent-glow: rgba(99, 102, 241, 0.25);
+  --success: #10B981;
+  --error: #EF4444;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.bg-scene {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 10%, rgba(99,102,241,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 90%, rgba(139,92,246,0.08) 0%, transparent 60%),
+    #0A0F1C;
+}
+
+.glass {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 20px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  white-space: nowrap;
+  outline: none;
+  font-family: inherit;
+}
+.btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+.btn:active:not(:disabled) { transform: scale(0.97); }
+
+.btn-primary {
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  box-shadow: 0 4px 20px rgba(99,102,241,0.3);
+  color: white;
+  padding: 14px 28px;
+}
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 6px 28px rgba(99,102,241,0.5);
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text-muted);
+  padding: 12px 20px;
+}
+.btn-ghost:hover:not(:disabled) { background: rgba(255,255,255,0.08); color: white; }
+
+.field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.field-input {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  color: white;
+  border-radius: 12px;
+  padding: 13px 16px 13px 44px;
+  font-size: 15px;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: inherit;
+}
+.field-input:focus {
+  border-color: var(--border-active);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+  background: rgba(255,255,255,0.07);
+}
+.field-input::placeholder { color: rgba(161,161,170,0.45); }
+.field-input.is-error { border-color: rgba(239,68,68,0.5); box-shadow: 0 0 0 3px rgba(239,68,68,0.10); }
+.field-input.no-icon { padding-left: 16px; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+option { background: #1a1f35; color: white; }
+
+/* ── High Contrast Mode ─────────────────────────── */
+body.hc {
+  --bg-base: #000000;
+  --bg-card: rgba(255,255,255,0.08);
+  --border: rgba(255,255,255,0.3);
+  --border-active: #ffffff;
+  --text-primary: #ffffff;
+  --text-muted: #d4d4d8;
+  --accent: #ffffff;
+  --accent-light: #ffffff;
+  --accent-glow: rgba(255,255,255,0.15);
+  background: #000;
+}
+body.hc .glass { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.25); }
+body.hc .btn-primary { background: #ffffff; color: #000000; box-shadow: none; }
+body.hc .btn-ghost   { border-color: rgba(255,255,255,0.4); color: #d4d4d8; }
+body.hc .field-input { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.3); color: #ffffff; }
+body.hc .field-input:focus { border-color: #ffffff; box-shadow: 0 0 0 3px rgba(255,255,255,0.15); }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.25); border-radius: 2px; }
+
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50%       { opacity: 0.65; transform: scale(1.09); }
+}
+@keyframes pulse-fast {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%       { opacity: 0.85; transform: scale(1.15); }
+}
+@keyframes wave-bar {
+  0%, 100% { transform: scaleY(0.25); }
+  50%       { transform: scaleY(1); }
+}
+@keyframes bounce-dot {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50%       { transform: scale(1.5); opacity: 1; }
+}

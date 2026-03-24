@@ -1,0 +1,59 @@
+.reg-wrap { width: 100%; }
+.reg-header { margin-bottom: 24px; }
+.reg-title  { font-size: 22px; font-weight: 700; color: white; }
+.reg-sub    { font-size: 13px; color: #A1A1AA; margin-top: 4px; }
+
+.reg-form { display: flex; flex-direction: column; gap: 16px; }
+
+.field-group { display: flex; flex-direction: column; gap: 6px; }
+
+.field-rel { position: relative; }
+
+.field-icon-abs {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  color: rgba(161,161,170,0.5);
+  pointer-events: none;
+  transition: color 0.2s;
+  line-height: 1;
+}
+
+.field-group:focus-within .field-icon-abs { color: #818CF8; }
+
+.row-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.phone-row { display: flex; gap: 8px; }
+.phone-prefix {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  color: #A1A1AA;
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.f-error {
+  font-size: 11px;
+  color: #EF4444;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  animation: slide-in 0.2s ease;
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.submit-btn { width: 100%; margin-top: 8px; padding: 14px; }

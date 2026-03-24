@@ -1,0 +1,59 @@
+<div class="welcome-wrap">
+
+  <!-- Language selector -->
+  <div class="lang-bar">
+    <button *ngFor="let lang of langs"
+            class="lang-btn"
+            [class.lang-active]="currentLang() === lang"
+            (click)="setLang(lang)">
+      {{ langLabels[lang] }}
+    </button>
+  </div>
+
+  <!-- Orb -->
+  <div class="orb-container">
+    <app-ai-orb orbState="idle" [size]="160"></app-ai-orb>
+  </div>
+
+  <!-- Headline -->
+  <h1 class="headline">{{ t().title }}</h1>
+  <p class="subtitle">{{ t().subtitle }}</p>
+  <p class="description">{{ t().description }}</p>
+
+  <!-- Feature pills -->
+  <div class="pills-row">
+    <div class="pill">
+      <div class="pill-icon">&#129504;</div>
+      <div>
+        <p class="pill-label">{{ t().featureAI }}</p>
+        <p class="pill-desc">{{ t().featureAIDesc }}</p>
+      </div>
+    </div>
+    <div class="pill">
+      <div class="pill-icon">&#127897;</div>
+      <div>
+        <p class="pill-label">{{ t().featureVoice }}</p>
+        <p class="pill-desc">{{ t().featureVoiceDesc }}</p>
+      </div>
+    </div>
+    <div class="pill">
+      <div class="pill-icon">&#128737;</div>
+      <div>
+        <p class="pill-label">{{ t().featureSecure }}</p>
+        <p class="pill-desc">{{ t().featureSecureDesc }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <button class="btn btn-primary cta-btn" (click)="start()">
+    {{ t().cta }} &#8594;
+  </button>
+
+  <!-- Returning patient link -->
+  <button class="btn btn-ghost returning-btn" (click)="returning()">
+    &#128100; Already have an appointment? Check in here
+  </button>
+
+  <p class="footer-text">{{ t().footer }}</p>
+</div>
