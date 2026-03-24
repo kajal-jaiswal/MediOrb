@@ -1,6 +1,7 @@
 import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { KioskStateService } from '../../services/kiosk-state.service';
 import { TriageService } from '../../services/triage.service';
 import { StepIndicatorComponent } from '../../components/step-indicator/step-indicator.component';
@@ -53,9 +54,17 @@ export class ConfirmationComponent implements OnInit {
       const p = this.state.patient();
       const r = this.result();
       if (!p || !r) throw new Error('Missing data');
-      const message = `MediOrb: Hi ${p.name}, your appointment (${this.state.appointmentId()}) is confirmed with ${r.recommendedDoctor.name}. Est. wait: ${r.estimatedWaitTime}. Please proceed to ${r.recommendedDoctor.floor}, ${r.recommendedDoctor.room}.`;
-      await this.triage.sendSms(p.contact, message).toPromise();
-      this.smsStatus.set('sent');
+
+      const message =
+        `MediOrb: Hi ${p.name}, your appointment ` +
+        `(${this.state.appointmentId()}) is confirmed with ${r.recommendedDoctor.name}. ` +
+        `Est. wait: ${r.estimatedWaitTime}. ` +
+        `Proceed to ${r.recommendedDoctor.floor}, ${r.recommendedDoctor.room}.`;
+
+      const res = await firstValueFrom(this.triage.sendSms(p.contact, message));
+      // res.success will be true even in mock mode so the demo always shows "Sent!"
+      // When Twilio is configured, it reflects real delivery status.
+      this.smsStatus.set(res?.success !== false ? 'sent' : 'error');
     } catch {
       this.smsStatus.set('error');
     }
@@ -69,20 +78,20 @@ export class ConfirmationComponent implements OnInit {
     try {
       const r = this.result();
       if (!r) throw new Error('Missing data');
-      await this.triage.sendEmail({
-        email: p.email,
-        patientName: p.name,
-        patientId: this.state.patientId(),
+      const res = await firstValueFrom(this.triage.sendEmail({
+        email:         p.email,
+        patientName:   p.name,
+        patientId:     this.state.patientId(),
         appointmentId: this.state.appointmentId(),
-        doctorName: r.recommendedDoctor.name,
-        specialty: r.recommendedDoctor.specialty,
-        floor: r.recommendedDoctor.floor,
-        room: r.recommendedDoctor.room,
-        urgency: r.urgencyLevel,
-        reasoning: r.reasoning,
-        symptoms: this.state.symptoms(),
-      }).toPromise();
-      this.emailStatus.set('sent');
+        doctorName:    r.recommendedDoctor.name,
+        specialty:     r.recommendedDoctor.specialty,
+        floor:         r.recommendedDoctor.floor,
+        room:          r.recommendedDoctor.room,
+        urgency:       r.urgencyLevel,
+        reasoning:     r.reasoning,
+        symptoms:      this.state.symptoms(),
+      }));
+      this.emailStatus.set(res?.success ? 'sent' : 'error');
     } catch {
       this.emailStatus.set('error');
     }

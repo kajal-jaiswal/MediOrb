@@ -3,18 +3,20 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 8px 0 16px;
+  padding: 8px 0 20px;
   position: relative;
+  animation: fade-up 0.5s ease both;
 }
 
+/* Language selector */
 .lang-bar {
   position: absolute;
   top: 0; right: 0;
   display: flex;
   gap: 2px;
   padding: 4px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(99,102,241,0.15);
   border-radius: 24px;
 }
 
@@ -29,25 +31,39 @@
   color: #71717a;
   transition: all 0.2s;
   font-family: inherit;
+  min-height: 32px;
 }
 .lang-active {
-  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  background: linear-gradient(135deg, #6366F1, #14b8a6);
   color: white;
-  box-shadow: 0 0 12px rgba(99,102,241,0.4);
+  box-shadow: 0 0 14px rgba(99,102,241,0.4);
 }
 
-.orb-container { margin: 32px 0 20px; }
+/* Orb */
+.orb-container { margin: 28px 0 16px; cursor: default; }
 
-.headline { font-size: 44px; font-weight: 900; color: white; letter-spacing: -0.02em; line-height: 1.1; }
-.subtitle  { font-size: 16px; color: #A1A1AA; margin-top: 8px; font-weight: 500; }
-.description { font-size: 13px; color: #71717a; max-width: 300px; line-height: 1.6; margin-top: 10px; }
+/* Headline */
+.headline {
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #f1f5f9 30%, #818cf8 65%, #14b8a6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.subtitle    { font-size: 15px; color: #94a3b8; margin-top: 8px; font-weight: 500; }
+.description { font-size: 12px; color: #475569; max-width: 280px; line-height: 1.7; margin-top: 8px; }
 
+/* Feature pills */
 .pills-row {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
-  margin: 24px 0;
+  margin: 22px 0 20px;
+  width: 100%;
 }
 
 .pill {
@@ -56,14 +72,16 @@
   gap: 10px;
   padding: 10px 14px;
   border-radius: 14px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(99,102,241,0.12);
+  transition: border-color 0.2s, background 0.2s;
 }
+.pill:hover { background: rgba(99,102,241,0.07); border-color: rgba(99,102,241,0.22); }
 
 .pill-icon {
-  width: 28px; height: 28px;
-  border-radius: 8px;
-  background: rgba(99,102,241,0.2);
+  width: 30px; height: 30px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(20,184,166,0.2));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -71,16 +89,37 @@
   flex-shrink: 0;
 }
 
-.pill-label { font-size: 12px; font-weight: 600; color: white; text-align: left; }
-.pill-desc  { font-size: 10px; color: #71717a; text-align: left; margin-top: 1px; }
+.pill-label { font-size: 12px; font-weight: 700; color: white; text-align: left; }
+.pill-desc  { font-size: 10px; color: #64748b; text-align: left; margin-top: 1px; }
 
-.cta-btn { padding: 14px 36px; font-size: 15px; }
-.returning-btn { font-size: 12px; padding: 10px 20px; margin-top: 10px; color: #818CF8; }
+/* CTA buttons */
+.cta-btn      { width: 100%; padding: 16px 32px; font-size: 16px; margin-top: 4px; }
+.returning-btn {
+  width: 100%;
+  font-size: 13px;
+  padding: 12px 20px;
+  margin-top: 8px;
+  color: #818CF8;
+  border-color: rgba(99,102,241,0.2);
+}
+.returning-btn:hover:not(:disabled) {
+  background: rgba(99,102,241,0.08);
+  color: #a5b4fc;
+}
 
+/* Subtle welcome footer note */
 .footer-text {
   font-size: 10px;
-  color: #3f3f46;
+  color: #334155;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  margin-top: 20px;
+  letter-spacing: 0.14em;
+  margin-top: 18px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .lang-bar { position: static; margin-bottom: 12px; align-self: flex-end; }
+  .headline { font-size: 32px; }
+  .pills-row { gap: 8px; }
+  .pill { padding: 8px 10px; }
 }

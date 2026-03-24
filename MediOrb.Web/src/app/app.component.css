@@ -2,11 +2,11 @@
 .kiosk-main {
   position: relative;
   z-index: 1;
-  min-height: calc(100vh - 64px - 44px);
+  min-height: calc(100vh - 64px - 52px);
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 88px 16px 32px; /* 88px = 64px header + 24px gap */
+  padding: 88px 16px 32px;
 }
 
 .kiosk-card {
@@ -16,13 +16,37 @@
   border-radius: 24px;
 }
 
-/* Footer */
+/* Footer — KJ brand, subtle shimmer */
 .kiosk-footer {
   position: relative;
   z-index: 1;
   text-align: center;
-  padding: 8px 16px 20px;
+  padding: 14px 16px 20px;
   font-size: 11px;
-  color: #3f3f46;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  letter-spacing: 0.03em;
 }
-.kiosk-footer strong { color: #52525b; }
+.kiosk-footer span {
+  background: linear-gradient(90deg, #475569 0%, #818cf8 50%, #475569 100%);
+  background-size: 200% 100%;
+  animation: footer-shimmer 7s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@keyframes footer-shimmer {
+  0%, 100% { background-position:   0% 50%; }
+  50%       { background-position: 100% 50%; }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .kiosk-main  { padding: 76px 12px 20px; }
+  .kiosk-card  { padding: 20px 14px; border-radius: 18px; max-width: 100%; }
+  .kiosk-footer { padding: 10px 16px 14px; }
+}
+@media (max-width: 480px) {
+  .kiosk-main { padding: 72px 8px 16px; }
+  .kiosk-card { padding: 16px 12px; border-radius: 14px; }
+}

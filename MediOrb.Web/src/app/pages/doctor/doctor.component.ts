@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { SignalrService } from '../../services/signalr.service';
+import { SignalrService, ConnectionState } from '../../services/signalr.service';
 import { TriageService } from '../../services/triage.service';
 import { PatientAlert } from '../../models/patient-queue.model';
 
@@ -24,6 +24,7 @@ export class DoctorComponent implements OnInit, OnDestroy {
   queue = signal<PatientAlert[]>([]);
   selected = signal<PatientAlert | null>(null);
   isConnected = signal<boolean>(false);
+  connectionState = signal<ConnectionState>('connecting');
   loadingQueue = signal<boolean>(true);
   actionLoading = signal<string>('');  // appointmentId being actioned
 
@@ -60,6 +61,9 @@ export class DoctorComponent implements OnInit, OnDestroy {
 
     this.subs.add(
       this.signalr.isConnected$.subscribe(v => this.isConnected.set(v))
+    );
+    this.subs.add(
+      this.signalr.connectionState$.subscribe(s => this.connectionState.set(s))
     );
 
     // New patient arrives → add to top (after sort, it'll position itself)

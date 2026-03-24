@@ -46,7 +46,7 @@ export const translations: Record<Language, Translations> = {
       featureAI: 'AI Triage', featureAIDesc: 'Instant specialist routing',
       featureVoice: 'Voice Input', featureVoiceDesc: 'Describe symptoms naturally',
       featureSecure: 'Secure & Fast', featureSecureDesc: 'Under 60 seconds',
-      cta: 'Start Check-in', footer: 'Groq · Llama 3 · Voice Enabled',
+      cta: 'Start Check-in', footer: 'AI-Powered · Voice Enabled',
     },
     registration: {
       title: 'Patient Registration', subtitle: 'Basic details for your medical record',
@@ -90,7 +90,7 @@ export const translations: Record<Language, Translations> = {
       featureAI: 'AI ट्राइएज', featureAIDesc: 'तुरंत विशेषज्ञ रूटिंग',
       featureVoice: 'वॉयस इनपुट', featureVoiceDesc: 'स्वाभाविक रूप से बोलें',
       featureSecure: 'सुरक्षित और तेज़', featureSecureDesc: '60 सेकंड से कम',
-      cta: 'चेक-इन शुरू करें', footer: 'Groq · Llama 3 · वॉयस सक्षम',
+      cta: 'चेक-इन शुरू करें', footer: 'AI-संचालित · वॉयस सक्षम',
     },
     registration: {
       title: 'रोगी पंजीकरण', subtitle: 'आपके मेडिकल रिकॉर्ड के लिए बुनियादी विवरण',
@@ -134,7 +134,7 @@ export const translations: Record<Language, Translations> = {
       featureAI: 'Triaje IA', featureAIDesc: 'Derivación instantánea a especialista',
       featureVoice: 'Entrada de Voz', featureVoiceDesc: 'Describe síntomas naturalmente',
       featureSecure: 'Seguro y Rápido', featureSecureDesc: 'En menos de 60 segundos',
-      cta: 'Iniciar Registro', footer: 'Groq · Llama 3 · Voz Habilitada',
+      cta: 'Iniciar Registro', footer: 'IA Potenciada · Voz Habilitada',
     },
     registration: {
       title: 'Registro del Paciente', subtitle: 'Detalles básicos para su historial médico',

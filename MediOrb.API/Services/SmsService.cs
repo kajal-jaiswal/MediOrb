@@ -13,13 +13,15 @@ public class SmsService(IConfiguration configuration, ILogger<SmsService> logger
         var fromNumber  = configuration["Twilio:FromNumber"]  ?? string.Empty;
 
         // ── Mock mode ──────────────────────────────────────────────
-        if (string.IsNullOrWhiteSpace(accountSid) || accountSid == "your_account_sid_here")
+        if (string.IsNullOrWhiteSpace(accountSid) ||
+            accountSid.Contains("YOUR_TWILIO_SID_HERE", StringComparison.OrdinalIgnoreCase) ||
+            accountSid.Contains("your_account_sid_here", StringComparison.OrdinalIgnoreCase))
         {
             logger.LogWarning(
-                "[SMS MOCK] Twilio not configured. Set Twilio:AccountSid / AuthToken / FromNumber in appsettings.json. " +
-                "Message NOT sent. To: {Phone} | Body: {Message}", toPhone, message);
-            await Task.Delay(600); // simulate latency
-            return true;           // return true so POC demo still works
+                "[SMS MOCK] Twilio not configured correctly. Message NOT sent. To: {Phone} | Body: {Message}",
+                toPhone, message);
+            await Task.Delay(600);
+            return true;
         }
 
         // ── Real Twilio send ───────────────────────────────────────
@@ -27,10 +29,15 @@ public class SmsService(IConfiguration configuration, ILogger<SmsService> logger
         {
             TwilioClient.Init(accountSid, authToken);
 
-            // Normalise to E.164 (+91XXXXXXXXXX for India)
-            var e164 = toPhone.StartsWith("+")
-                ? toPhone
-                : $"+91{toPhone.TrimStart('0')}";
+            // Strip formatting chars, then normalise to E.164 (+91XXXXXXXXXX for India)
+            var digits = new string(toPhone.Where(char.IsDigit).ToArray());
+            var e164 = toPhone.TrimStart().StartsWith("+")
+                ? "+" + digits
+                : digits.Length == 10
+                    ? $"+91{digits}"
+                    : digits.Length == 12 && digits.StartsWith("91")
+                        ? $"+{digits}"
+                        : $"+91{digits.TrimStart('0')}";
 
             var msg = await MessageResource.CreateAsync(
                 to:   new PhoneNumber(e164),

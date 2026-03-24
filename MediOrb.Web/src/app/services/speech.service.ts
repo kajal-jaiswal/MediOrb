@@ -61,13 +61,20 @@ export class SpeechService {
 
     this.recognition.onresult = (e: any) => {
       this.resetSilenceTimer();
-      let interim = '';
+      let interimTranscript = '';
+
+      // Start from e.resultIndex (not 0) to avoid reprocessing already-finalized
+      // results — the root cause of duplicate transcripts on mobile Chrome/Safari.
       for (let i = e.resultIndex; i < e.results.length; i++) {
-        const seg = e.results[i][0].transcript;
-        if (e.results[i].isFinal) this.finalizedText += seg + ' ';
-        else interim += seg;
+        const segment = e.results[i][0].transcript;
+        if (e.results[i].isFinal) {
+          this.finalizedText += segment.trimEnd() + ' ';
+        } else {
+          interimTranscript += segment;
+        }
       }
-      this.transcript$.next(this.finalizedText + interim);
+
+      this.transcript$.next((this.finalizedText + interimTranscript).trimStart());
     };
 
     this.recognition.start();

@@ -63,6 +63,16 @@
     </div>
   </div>
 
+  <!-- AI Reasoning card -->
+  <div class="glass card-section" *ngIf="r.reasoning">
+    <p class="section-label">&#129504; AI Reasoning</p>
+    <p class="reasoning-text">{{ r.reasoning }}</p>
+    <div *ngIf="r.suggestedTests?.length" class="tests-row">
+      <span *ngFor="let test of r.suggestedTests" class="test-chip">{{ test }}</span>
+    </div>
+    <p *ngIf="r.additionalNotes" class="notes-text">&#9888; {{ r.additionalNotes }}</p>
+  </div>
+
   <!-- Notifications card -->
   <div class="glass card-section">
     <p class="section-label">{{ t().dispatchTitle }}</p>

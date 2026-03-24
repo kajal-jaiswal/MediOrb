@@ -40,7 +40,9 @@ export interface EmailPayload {
 
 @Injectable({ providedIn: 'root' })
 export class TriageService {
-  private readonly base = 'http://localhost:5001/api';
+  private readonly base = window.location.hostname === 'localhost'
+    ? 'http://localhost:5001/api'
+    : 'https://mediorb.onrender.com/api';
 
   constructor(private http: HttpClient) {}
 

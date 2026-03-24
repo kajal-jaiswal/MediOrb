@@ -9,9 +9,12 @@
         <p class="doc-sub">Live patient queue · MediOrb AI Triage</p>
       </div>
     </div>
-    <div class="conn-pill" [class.conn-live]="isConnected()" [class.conn-off]="!isConnected()">
+    <div class="conn-pill"
+         [class.conn-live]="connectionState() === 'connected'"
+         [class.conn-off]="connectionState() === 'disconnected'"
+         [class.conn-connecting]="connectionState() === 'connecting'">
       <span class="conn-dot"></span>
-      {{ isConnected() ? 'Live' : 'Connecting…' }}
+      {{ connectionState() === 'connected' ? 'Live' : connectionState() === 'connecting' ? 'Connecting…' : 'Disconnected' }}
     </div>
   </div>
 

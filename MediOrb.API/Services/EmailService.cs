@@ -19,14 +19,15 @@ public class EmailService(IHttpClientFactory httpClientFactory, IConfiguration c
     {
         var apiKey = configuration["Resend:ApiKey"] ?? string.Empty;
 
-        if (string.IsNullOrWhiteSpace(apiKey) || apiKey == "your_resend_api_key_here")
+        if (string.IsNullOrWhiteSpace(apiKey) ||
+            apiKey.Contains("your_resend_api_key_here", StringComparison.OrdinalIgnoreCase) ||
+            apiKey.Contains("YOUR_RESEND_API_KEY_HERE", StringComparison.OrdinalIgnoreCase))
         {
             logger.LogWarning(
-                "[EMAIL] ⚠ Resend API key not configured. Set 'Resend:ApiKey' in appsettings.json. " +
-                "Email will NOT be delivered. Recipient: {Email}, Patient: {PatientName}",
-                req.Email, req.PatientName);
+                "[EMAIL MOCK] Resend API key not configured correctly. Email will NOT be delivered. Recipient: {Email}",
+                req.Email);
             await Task.Delay(800);
-            return false; // Honest: email was NOT sent
+            return false;
         }
 
         var urgencyColor = _urgencyColors.GetValueOrDefault(req.Urgency, "#F59E0B");
