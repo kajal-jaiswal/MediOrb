@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { TriageResult } from '../models/triage.model';
 import { Language } from '../translations';
 import { LookupResult, PatientAlert, QueuePosition } from '../models/patient-queue.model';
+import { environment } from '../../environments/environment';
 
 export interface TriageRequest {
   // Patient identity (persisted to DB)
@@ -40,9 +41,7 @@ export interface EmailPayload {
 
 @Injectable({ providedIn: 'root' })
 export class TriageService {
-  private readonly base = window.location.hostname === 'localhost'
-    ? 'http://localhost:5001/api'
-    : 'https://mediorb.onrender.com/api';
+  private readonly base = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 

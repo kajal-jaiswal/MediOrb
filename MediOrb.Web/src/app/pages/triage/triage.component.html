@@ -1,6 +1,6 @@
 <app-step-indicator [currentStep]="3"></app-step-indicator>
 
-<!-- Loading state -->
+<!-- ── Loading state ──────────────────────────────────────────── -->
 <div *ngIf="isAnalyzing()" class="loading-wrap">
   <app-ai-orb orbState="processing" [size]="140"></app-ai-orb>
   <h2 class="loading-title">{{ t().loadingTitle }}</h2>
@@ -12,7 +12,7 @@
   </div>
 </div>
 
-<!-- Result state -->
+<!-- ── Result state ───────────────────────────────────────────── -->
 <div *ngIf="result() as r" class="result-wrap">
 
   <!-- Header row -->
@@ -27,10 +27,22 @@
     </span>
   </div>
 
-  <!-- Doctor card -->
+  <!-- Primary condition label (Phase B — shown only when backend returns it) -->
+  <div *ngIf="r.primaryCondition" class="condition-banner">
+    <span class="condition-icon">&#x1FA7A;</span>
+    <span class="condition-text">{{ r.primaryCondition }}</span>
+  </div>
+
+  <!-- ── Doctor card ──────────────────────────────────────────── -->
   <div class="glass card-section">
     <div class="doctor-row">
-      <div class="doctor-avatar">&#128100;</div>
+
+      <!-- Initials avatar (replaces plain emoji) -->
+      <div class="doctor-avatar"
+           [style.border-color]="getUrgencyStyle(r.urgencyLevel).dot + '55'">
+        {{ getInitials(r.recommendedDoctor.name) }}
+      </div>
+
       <div class="doctor-info">
         <p class="section-label">{{ t().doctorLabel }}</p>
         <h3 class="doctor-name">{{ r.recommendedDoctor.name }}</h3>
@@ -40,19 +52,54 @@
           <span class="meta-item">&#128336; {{ t().waitLabel }}: {{ r.estimatedWaitTime }}</span>
         </div>
       </div>
-      <span class="avail-pill" [class.avail-yes]="r.recommendedDoctor.available" [class.avail-no]="!r.recommendedDoctor.available">
-        {{ r.recommendedDoctor.available ? t().availableLabel : t().busyLabel }}
-      </span>
+
+      <!-- Availability with live pulse dot -->
+      <div class="avail-wrap">
+        <span class="avail-live-dot"
+              [class.dot-available]="r.recommendedDoctor.available"
+              [class.dot-busy]="!r.recommendedDoctor.available">
+        </span>
+        <span class="avail-pill"
+              [class.avail-yes]="r.recommendedDoctor.available"
+              [class.avail-no]="!r.recommendedDoctor.available">
+          {{ r.recommendedDoctor.available ? t().availableLabel : t().busyLabel }}
+        </span>
+      </div>
+    </div>
+
+    <!-- AI Confidence bar (Phase B — shown only when backend returns it) -->
+    <div *ngIf="r.confidence != null" class="confidence-row">
+      <span class="conf-label">AI Confidence</span>
+      <div class="conf-bar-wrap">
+        <div class="conf-bar"
+             [style.width.%]="r.confidence * 100"
+             [style.background]="r.confidence > 0.8 ? '#10b981' : r.confidence > 0.6 ? '#f59e0b' : '#ef4444'">
+        </div>
+      </div>
+      <span class="conf-pct">{{ (r.confidence * 100).toFixed(0) }}%</span>
     </div>
   </div>
 
-  <!-- AI Reasoning -->
-  <div class="glass card-section card-indigo">
+  <!-- ── Structured AI Reasoning (Phase A) ─────────────────────── -->
+  <div class="glass card-section card-indigo" *ngIf="structuredReasoning() as s">
     <p class="section-label">{{ t().reasoningLabel }}</p>
-    <p class="reasoning-text">{{ r.reasoning }}</p>
+
+    <!-- 1-line summary -->
+    <p class="reasoning-summary">{{ s.summary }}</p>
+
+    <!-- Bullet key points (only if there are more sentences) -->
+    <ul *ngIf="s.bullets.length > 0" class="reasoning-bullets">
+      <li *ngFor="let b of s.bullets">{{ b }}</li>
+    </ul>
+
+    <!-- Suggested action banner -->
+    <div class="action-banner">
+      <span class="action-arrow">&#8594;</span>
+      <span class="action-text">{{ s.action }}</span>
+    </div>
   </div>
 
-  <!-- Suggested Tests -->
+  <!-- ── Suggested Tests ────────────────────────────────────────── -->
   <div *ngIf="r.suggestedTests && r.suggestedTests.length > 0" class="glass card-section">
     <p class="section-label">&#129514; {{ t().testsLabel }}</p>
     <div class="tests-row">
@@ -60,7 +107,7 @@
     </div>
   </div>
 
-  <!-- Additional notes -->
+  <!-- ── Additional notes ──────────────────────────────────────── -->
   <div *ngIf="r.additionalNotes" class="notes-card">
     <span class="notes-icon">&#9888;</span>
     <p class="notes-text">{{ r.additionalNotes }}</p>
@@ -69,4 +116,5 @@
   <button class="btn btn-primary confirm-btn" (click)="confirm()">
     {{ t().btn }} &#8594;
   </button>
+
 </div>

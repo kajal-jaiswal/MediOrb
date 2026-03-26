@@ -1,12 +1,12 @@
 <div class="doc-layout">
 
-  <!-- ── Header ─────────────────────────────────── -->
+  <!-- ── Header ──────────────────────────────────────────────── -->
   <div class="doc-header">
     <div class="doc-brand">
       <span class="doc-icon">&#128084;</span>
       <div>
         <h1 class="doc-title">Doctor Dashboard</h1>
-        <p class="doc-sub">Live patient queue · MediOrb AI Triage</p>
+        <p class="doc-sub">Live patient queue &middot; MediOrb AI Triage</p>
       </div>
     </div>
     <div class="conn-pill"
@@ -18,7 +18,7 @@
     </div>
   </div>
 
-  <!-- ── Stats row ───────────────────────────────── -->
+  <!-- ── Stats row ───────────────────────────────────────────── -->
   <div class="stats-row">
     <div class="stat-card">
       <p class="stat-val">{{ totalWaiting() }}</p>
@@ -38,21 +38,74 @@
     </div>
   </div>
 
-  <!-- ── Main pane (queue + detail) ────────────────── -->
+  <!-- ── Phase C: Search / Filter / Sort toolbar ─────────────── -->
+  <div class="queue-toolbar">
+    <!-- Search input -->
+    <div class="search-wrap">
+      <span class="search-icon">&#128269;</span>
+      <input
+        class="search-input"
+        type="text"
+        placeholder="Search patient name or symptoms…"
+        [value]="searchQuery()"
+        (input)="searchQuery.set($any($event.target).value)"
+      />
+      <button *ngIf="searchQuery()" class="search-clear" (click)="searchQuery.set('')">&#10005;</button>
+    </div>
+
+    <!-- Urgency filter chips -->
+    <div class="filter-chips">
+      <button
+        *ngFor="let u of urgencyFilters"
+        class="filter-chip"
+        [class.chip-active]="filterUrgency() === u"
+        (click)="filterUrgency.set(u)">
+        {{ u }}
+      </button>
+    </div>
+
+    <!-- Sort toggle -->
+    <div class="sort-toggle">
+      <button class="sort-btn"
+              [class.sort-active]="sortMode() === 'urgency'"
+              (click)="sortMode.set('urgency')">
+        &#8679; Priority
+      </button>
+      <button class="sort-btn"
+              [class.sort-active]="sortMode() === 'time'"
+              (click)="sortMode.set('time')">
+        &#128336; Time
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Main pane (queue + detail) ──────────────────────────── -->
   <div class="main-pane">
 
     <!-- Queue list -->
     <div class="queue-pane">
+
       <!-- Loading skeleton -->
       <div *ngIf="loadingQueue()" class="loading-msg">
         <span class="spinner">&#8635;</span> Loading queue…
       </div>
 
-      <!-- Empty state -->
+      <!-- Empty / no-match state -->
       <div *ngIf="!loadingQueue() && sortedQueue().length === 0" class="empty-state">
         <div class="empty-icon">&#128084;</div>
-        <p class="empty-title">No patients in queue</p>
-        <p class="empty-sub">Patients will appear here instantly as they complete kiosk check-in.</p>
+        <p class="empty-title">
+          {{ (searchQuery() || filterUrgency() !== 'All') ? 'No matching patients' : 'No patients in queue' }}
+        </p>
+        <p class="empty-sub">
+          {{ (searchQuery() || filterUrgency() !== 'All')
+              ? 'Try adjusting your search or filter.'
+              : 'Patients will appear here instantly as they complete kiosk check-in.' }}
+        </p>
+        <button *ngIf="searchQuery() || filterUrgency() !== 'All'"
+                class="action-btn btn-call" style="margin-top:12px;max-width:140px"
+                (click)="clearFilters()">
+          Clear filters
+        </button>
       </div>
 
       <!-- Queue items -->
@@ -68,15 +121,23 @@
         <div class="item-body">
           <div class="item-top">
             <div class="item-name">{{ p.patientName }}</div>
-            <span class="urgency-badge"
-                  [style.color]="urgencyColor(p.urgencyLevel)"
-                  [style.border-color]="urgencyColor(p.urgencyLevel) + '44'"
-                  [style.background]="urgencyColor(p.urgencyLevel) + '18'">
-              {{ p.urgencyLevel }}
-            </span>
+            <div class="item-badges">
+              <!-- Countdown pill (Phase C) -->
+              <span class="countdown-pill"
+                    [class.overdue]="isOverdue(p.checkedInAt, p.estimatedWaitTime)">
+                {{ countdownLabel(p.checkedInAt, p.estimatedWaitTime) }}
+              </span>
+              <!-- Urgency badge -->
+              <span class="urgency-badge"
+                    [style.color]="urgencyColor(p.urgencyLevel)"
+                    [style.border-color]="urgencyColor(p.urgencyLevel) + '44'"
+                    [style.background]="urgencyColor(p.urgencyLevel) + '18'">
+                {{ p.urgencyLevel }}
+              </span>
+            </div>
           </div>
           <div class="item-meta">
-            {{ p.age }} yrs · {{ p.gender }} ·
+            {{ p.age }} yrs &middot; {{ p.gender }} &middot;
             <span class="item-time">{{ timeSince(p.checkedInAt) }}</span>
           </div>
           <div class="item-symptoms">{{ p.symptoms | slice:0:80 }}{{ p.symptoms.length > 80 ? '…' : '' }}</div>
@@ -92,36 +153,50 @@
       </div>
     </div>
 
-    <!-- Detail panel -->
+    <!-- ── Detail panel ────────────────────────────────────────── -->
     <div class="detail-pane" [class.detail-open]="selected()">
       <ng-container *ngIf="selected() as p">
 
         <div class="detail-header">
           <div>
             <h2 class="detail-name">{{ p.patientName }}</h2>
-            <p class="detail-meta">{{ p.patientId }} · {{ p.age }} yrs · {{ p.gender }}</p>
+            <p class="detail-meta">{{ p.patientId }} &middot; {{ p.age }} yrs &middot; {{ p.gender }}</p>
           </div>
           <button class="close-btn" (click)="closeDetail()">&#10005;</button>
         </div>
 
-        <!-- Urgency -->
+        <!-- Urgency + wait time -->
         <div class="detail-urgency" [style.border-color]="urgencyColor(p.urgencyLevel) + '55'">
           <span class="urgency-dot" [style.background]="urgencyColor(p.urgencyLevel)"></span>
           <span [style.color]="urgencyColor(p.urgencyLevel)" class="urgency-label">{{ p.urgencyLevel }} Priority</span>
           <span class="wait-badge">&#128336; {{ p.estimatedWaitTime }}</span>
         </div>
 
-        <!-- Symptoms -->
+        <!-- Reported Symptoms -->
         <div class="detail-section">
           <p class="section-label">&#128203; Reported Symptoms</p>
           <p class="section-text">{{ p.symptoms }}</p>
         </div>
 
-        <!-- Doctor -->
+        <!-- Assigned Doctor (Phase E: floor + room if present) -->
         <div class="detail-section">
           <p class="section-label">&#128100; Assigned Doctor</p>
           <p class="section-text fw-bold">{{ p.doctorName }}</p>
           <p class="section-text text-muted">{{ p.doctorSpecialty }}</p>
+          <p *ngIf="p.floor && p.room" class="section-text" style="color:#A1A1AA;font-size:11px;margin-top:3px">
+            &#128205; {{ p.floor }} &middot; {{ p.room }}
+          </p>
+        </div>
+
+        <!-- Phase E: Returning patient history -->
+        <div *ngIf="p.isReturning" class="detail-section returning-section">
+          <p class="section-label">&#128203; Previous Visit</p>
+          <p *ngIf="p.previousSymptoms" class="section-text history-text">
+            {{ p.previousSymptoms }}
+          </p>
+          <p *ngIf="!p.previousSymptoms" class="section-text" style="color:#52525b;font-style:italic">
+            Returning patient — no prior symptoms on record.
+          </p>
         </div>
 
         <!-- AI Reasoning -->
@@ -168,6 +243,7 @@
 
       </ng-container>
     </div>
+
   </div>
 
 </div>

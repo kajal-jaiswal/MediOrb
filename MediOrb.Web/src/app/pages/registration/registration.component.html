@@ -68,6 +68,15 @@
       <p *ngIf="fieldError('email')" class="f-error">&#9888; {{ fieldError('email') }}</p>
     </div>
 
+    <!-- Consent -->
+    <div class="field-group consent-group">
+      <label class="consent-label">
+        <input type="checkbox" formControlName="consent" class="consent-check" [class.is-error]="fieldError('consent')">
+        <span class="consent-text">{{ t().consent }}</span>
+      </label>
+      <p *ngIf="fieldError('consent')" class="f-error">&#9888; {{ fieldError('consent') }}</p>
+    </div>
+
     <button type="submit" class="btn btn-primary submit-btn">
       {{ t().btn }} &#8250;
     </button>

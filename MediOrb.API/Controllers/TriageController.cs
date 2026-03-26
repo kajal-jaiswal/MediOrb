@@ -48,6 +48,22 @@ public class TriageController(
 
     private async Task PersistAndBroadcastAsync(TriageRequest req, TriageResult result)
     {
+      try
+      {
+        // ── CALCULATE DYNAMIC WAIT TIME ──
+        // Get existing queue for THE SAME DOCTOR
+        var currentQueue = await patientService.GetQueueAsync();
+        var doctorQueueCount = currentQueue.Count(a => a.DoctorName == result.RecommendedDoctor.Name);
+        
+        // Base wait time from AI (e.g. "15-20 minutes") -> extract first number
+        var baseMinutes = 15;
+        var match = System.Text.RegularExpressions.Regex.Match(result.EstimatedWaitTime, @"\d+");
+        if (match.Success) int.TryParse(match.Value, out baseMinutes);
+
+        // Add 10 mins per person already in queue
+        var dynamicMinutes = baseMinutes + (doctorQueueCount * 10);
+        result.EstimatedWaitTime = $"{dynamicMinutes}-{dynamicMinutes + 5} minutes";
+
         // Upsert patient
         var patient = new Patient
         {
@@ -98,13 +114,27 @@ public class TriageController(
             AdditionalNotes   = result.AdditionalNotes,
             Status            = "Waiting",
             CheckedInAt       = appt.CreatedAt,
+            // Phase E: patient history fields
+            IsReturning       = req.IsReturning,
+            PreviousSymptoms  = req.IsReturning ? req.PreviousSymptoms : null,
+            Floor             = result.RecommendedDoctor.Floor,
+            Room              = result.RecommendedDoctor.Room,
         };
 
         await hubContext.Clients.Group("doctors")
             .SendAsync("NewPatientAlert", alert);
 
         logger.LogInformation(
-            "Broadcast NewPatientAlert → {PatientName} urgency={Urgency} appt={AppointmentId}",
-            req.PatientName, result.UrgencyLevel, appt.AppointmentId);
+            "Broadcast NewPatientAlert → {PatientName} [Real-time Queue: {Count}] urgency={Urgency} appt={AppointmentId}",
+            req.PatientName, doctorQueueCount, result.UrgencyLevel, appt.AppointmentId);
+      }
+      catch (Exception ex)
+      {
+        // A notification or broadcast failure must never surface to the patient.
+        // Log and swallow so the main Analyze response is already on its way.
+        logger.LogError(ex,
+            "PersistAndBroadcast failed for PatientId={PatientId} AppointmentId={AppointmentId}",
+            req.PatientId, req.AppointmentId);
+      }
     }
 }

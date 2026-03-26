@@ -47,11 +47,13 @@ public class SmsService(IConfiguration configuration, ILogger<SmsService> logger
 
             if (msg.ErrorCode is not null)
             {
-                logger.LogError("Twilio returned error {Code}: {Info}", msg.ErrorCode, msg.ErrorMessage);
+                logger.LogError("Twilio send request failed. Code: {Code}, Message: {Info}, Status: {Status}", 
+                                msg.ErrorCode, msg.ErrorMessage, msg.Status);
                 return false;
             }
 
-            logger.LogInformation("Twilio SMS sent. SID: {Sid} → {To}", msg.Sid, e164);
+            logger.LogInformation("Twilio SMS sent successfully. SID: {Sid}, Status: {Status} → {To}", 
+                                  msg.Sid, msg.Status, e164);
             return true;
         }
         catch (Exception ex)

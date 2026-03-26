@@ -57,3 +57,20 @@
 }
 
 .submit-btn { width: 100%; margin-top: 8px; padding: 14px; }
+
+.consent-group { margin: 12px 0 20px; }
+.consent-label { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
+.consent-check { 
+  width: 18px; 
+  height: 18px; 
+  margin-top: 2px; 
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+.consent-text { 
+  font-size: 13px; 
+  line-height: 1.5; 
+  color: var(--text-muted); 
+  font-weight: 500; 
+}
+.consent-check.is-error { outline: 2px solid rgba(239, 68, 68, 0.5); border-radius: 4px; }

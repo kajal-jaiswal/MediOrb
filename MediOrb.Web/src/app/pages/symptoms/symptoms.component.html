@@ -2,9 +2,12 @@
 
 <div class="sym-wrap">
 
-  <!-- Triage error banner -->
+  <!-- Triage error banner with retry -->
   <div *ngIf="triageError" class="error-banner">
-    &#9888; {{ triageError }}
+    <span class="error-msg">&#9888; {{ triageError }}</span>
+    <button class="retry-btn" (click)="analyze()" [disabled]="!symptomsText.trim()">
+      &#8635; Retry
+    </button>
   </div>
 
   <!-- Orb (clickable) -->

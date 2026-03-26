@@ -4,6 +4,8 @@ import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { KioskHeaderComponent } from './components/kiosk-header/kiosk-header.component';
+import { SignalrService } from './services/signalr.service';
+import { SpeechService } from './services/speech.service';
 
 @Component({
   selector: 'app-root',
@@ -24,5 +26,21 @@ export class AppComponent {
     { initialValue: this.router.url.startsWith('/doctor') }
   );
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private signalr: SignalrService,
+    private speech: SpeechService
+  ) {
+    // Connect globally so we can hear "Now calling..." pages anywhere
+    this.signalr.connect();
+
+    // 📢 INNOVATION: Listen for doctors calling patients
+    this.signalr.patientCalled$.subscribe(info => {
+      // Don't announce if the doctor is currently looking at their own dashboard
+      if (this.router.url.startsWith('/doctor')) return;
+
+      const announcement = `Attention please. Patient ${info.patientName}, please proceed to ${info.room}.`;
+      this.speech.speak(announcement);
+    });
+  }
 }

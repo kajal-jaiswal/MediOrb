@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { PatientAlert } from '../models/patient-queue.model';
+import { environment } from '../../environments/environment';
 
 export type ConnectionState = 'connecting' | 'connected' | 'disconnected';
 
@@ -9,9 +10,9 @@ export type ConnectionState = 'connecting' | 'connected' | 'disconnected';
 export class SignalrService {
   private hub: signalR.HubConnection | null = null;
 
-  private readonly hubUrl = window.location.hostname === 'localhost'
-    ? 'http://localhost:5001/hubs/patients'
-    : 'https://mediorb.onrender.com/hubs/patients';
+  // Sourced from environment — Vercel cannot proxy WebSocket traffic,
+  // so this always points directly at the backend (Render in production).
+  private readonly hubUrl = environment.signalrUrl;
 
   readonly isConnected$ = new BehaviorSubject<boolean>(false);
   readonly connectionState$ = new BehaviorSubject<ConnectionState>('connecting');
@@ -20,6 +21,11 @@ export class SignalrService {
     appointmentId: string;
     status: string;
     patientName: string;
+  }>();
+  readonly patientCalled$ = new Subject<{
+    patientName: string;
+    doctorName: string;
+    room: string;
   }>();
 
   get isConnected(): boolean {
@@ -32,7 +38,10 @@ export class SignalrService {
     this.connectionState$.next('connecting');
 
     this.hub = new signalR.HubConnectionBuilder()
-      .withUrl(this.hubUrl)
+      .withUrl(this.hubUrl, {
+        transport: signalR.HttpTransportType.WebSockets,
+        skipNegotiation: true,
+      })
       .withAutomaticReconnect([0, 2000, 5000, 10000])
       .configureLogging(signalR.LogLevel.Warning)
       .build();
@@ -43,6 +52,10 @@ export class SignalrService {
 
     this.hub.on('PatientStatusUpdated', (update: { appointmentId: string; status: string; patientName: string }) => {
       this.statusUpdated$.next(update);
+    });
+
+    this.hub.on('PatientCalled', (info: { patientName: string; doctorName: string; room: string }) => {
+      this.patientCalled$.next(info);
     });
 
     this.hub.onreconnecting(() => {

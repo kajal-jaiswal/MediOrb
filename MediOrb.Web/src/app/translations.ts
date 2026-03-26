@@ -15,6 +15,7 @@ export interface Translations {
     gender: string; genderMale: string; genderFemale: string; genderOther: string;
     contact: string; contactPlaceholder: string;
     email: string; emailPlaceholder: string;
+    consent: string;
     btn: string;
   };
   symptoms: {
@@ -55,6 +56,7 @@ export const translations: Record<Language, Translations> = {
       gender: 'Gender', genderMale: 'Male', genderFemale: 'Female', genderOther: 'Other',
       contact: 'Phone Number', contactPlaceholder: '10-digit mobile number',
       email: 'Email Address (Optional)', emailPlaceholder: 'To receive your report',
+      consent: 'I consent to the processing of my medical data as per HIPAA guidelines.',
       btn: 'Next: Describe Symptoms',
     },
     symptoms: {
@@ -99,6 +101,7 @@ export const translations: Record<Language, Translations> = {
       gender: 'लिंग', genderMale: 'पुरुष', genderFemale: 'महिला', genderOther: 'अन्य',
       contact: 'फोन नंबर', contactPlaceholder: '10-अंकीय मोबाइल नंबर',
       email: 'ईमेल पता (वैकल्पिक)', emailPlaceholder: 'रिपोर्ट प्राप्त करने के लिए',
+      consent: 'मैं HIPAA दिशानिर्देशों के अनुसार अपने चिकित्सा डेटा के प्रसंस्करण के लिए सहमति देता हूं।',
       btn: 'अगला: लक्षणों का वर्णन करें',
     },
     symptoms: {
@@ -143,6 +146,7 @@ export const translations: Record<Language, Translations> = {
       gender: 'Género', genderMale: 'Masculino', genderFemale: 'Femenino', genderOther: 'Otro',
       contact: 'Número de Teléfono', contactPlaceholder: 'Número móvil de 10 dígitos',
       email: 'Correo Electrónico (Opcional)', emailPlaceholder: 'Para recibir su informe',
+      consent: 'Doy mi consentimiento para el procesamiento de mis datos médicos según las directrices de HIPAA.',
       btn: 'Siguiente: Describir Síntomas',
     },
     symptoms: {

@@ -37,17 +37,58 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── Smart Mirror Background (pure CSS — no image) ─ */
+/* ─── Smart Mirror Background (animated) ─────────── */
 .bg-scene {
   position: fixed;
   inset: 0;
   z-index: -1;
+  overflow: hidden;
   background:
     radial-gradient(ellipse 85% 65% at 5%  0%,   rgba(99,102,241,0.18)  0%, transparent 55%),
     radial-gradient(ellipse 55% 45% at 95% 100%,  rgba(20,184,166,0.13)  0%, transparent 55%),
     radial-gradient(ellipse 50% 40% at 50% 50%,   rgba(139,92,246,0.07)  0%, transparent 65%),
     radial-gradient(ellipse 30% 30% at 80%  20%,  rgba(20,184,166,0.06)  0%, transparent 55%),
     #020817;
+}
+
+/* Drifting grid overlay */
+.bg-scene::after {
+  content: '';
+  position: absolute;
+  inset: -48px;            /* extend beyond edges so drift doesn't show gaps */
+  background-image:
+    linear-gradient(rgba(99,102,241,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99,102,241,0.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+  animation: grid-drift 24s linear infinite;
+  mask-image: radial-gradient(ellipse 85% 85% at 50% 50%, black 0%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 85% 85% at 50% 50%, black 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Slow-floating ambient orb */
+.bg-scene::before {
+  content: '';
+  position: absolute;
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99,102,241,0.055) 0%, transparent 70%);
+  top: -250px;
+  left: -200px;
+  animation: orb-float 22s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes grid-drift {
+  from { transform: translateY(0); }
+  to   { transform: translateY(48px); }
+}
+
+@keyframes orb-float {
+  0%, 100% { transform: translate(0px,   0px)   scale(1);    }
+  33%       { transform: translate(90px,  70px)  scale(1.08); }
+  66%       { transform: translate(-50px, 110px) scale(0.94); }
 }
 
 /* ─── Smart Mirror Glass ─────────────────────────── */
@@ -295,21 +336,10 @@ body.hc .field-input:focus {
 /* ─── Responsive — Mobile Perfect ───────────────── */
 @media (max-width: 768px) {
   .kiosk-main {
-    padding: 76px 12px 24px;
+    padding: 20px 12px;   /* Significantly reduced for mobile */
     align-items: flex-start;
   }
   .kiosk-card {
-    padding: 20px 16px;
-    border-radius: 18px;
-    width: 100%;
-    max-width: 100%;
-  }
-  .btn {
-    min-height: 52px;
-    font-size: 16px;
-    width: 100%;
-  }
-  .field-input {
     min-height: 52px;
     font-size: 16px;
   }

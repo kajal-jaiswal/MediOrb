@@ -62,19 +62,19 @@ public class EmailService(IHttpClientFactory httpClientFactory, IConfiguration c
     private static string BuildEmailHtml(EmailNotificationRequest req, string urgencyColor)
     {
         var css = @"
-          body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:#0A0F1C;color:#fff;margin:0;padding:0}
+          body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;background:#f8fafc;color:#18181b;margin:0;padding:0}
           .wrap{max-width:560px;margin:40px auto;padding:0 20px}
-          .card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:32px}
-          .logo{text-align:center;font-weight:800;font-size:20px;color:#818CF8;margin-bottom:20px}
-          .badge{display:inline-block;background:rgba(16,185,129,0.15);color:#10B981;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid rgba(16,185,129,0.3);margin-bottom:16px}
-          h1{color:#fff;font-size:22px;margin:0 0 6px}
-          .sub{color:#A1A1AA;font-size:14px;margin:0 0 24px}
-          .row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06)}
+          .card{background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:32px}
+          .logo{text-align:center;font-weight:800;font-size:20px;color:#6366f1;margin-bottom:20px}
+          .badge{display:inline-block;background:rgba(16,185,129,0.1);color:#059669;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid rgba(16,185,129,0.25);margin-bottom:16px}
+          h1{color:#0f172a;font-size:22px;margin:0 0 6px}
+          .sub{color:#64748b;font-size:14px;margin:0 0 24px}
+          .row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f1f5f9}
           .row:last-child{border-bottom:none}
-          .key{color:#71717a;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
-          .val{color:#fff;font-size:14px;font-weight:600;text-align:right}
-          .ai{background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:12px;padding:16px;margin-top:20px;color:#c7c7d4;font-size:13px;line-height:1.6}
-          .footer{text-align:center;color:#3f3f46;font-size:11px;margin-top:24px}
+          .key{color:#64748b;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em}
+          .val{color:#18181b;font-size:14px;font-weight:600;text-align:right}
+          .ai{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin-top:20px;color:#374151;font-size:13px;line-height:1.6}
+          .footer{text-align:center;color:#94a3b8;font-size:11px;margin-top:24px}
         ";
 
         return $"""
@@ -88,12 +88,13 @@ public class EmailService(IHttpClientFactory httpClientFactory, IConfiguration c
                 <h1>Hello, {req.PatientName}</h1>
                 <p class="sub">Your check-in is complete. Here are your appointment details.</p>
                 <div>
-                  <div class="row"><span class="key">Patient ID</span><span class="val" style="color:#818CF8;font-family:monospace">{req.PatientId}</span></div>
-                  <div class="row"><span class="key">Appointment</span><span class="val" style="color:#818CF8;font-family:monospace">{req.AppointmentId}</span></div>
+                  <div class="row"><span class="key">Patient ID</span><span class="val" style="color:#4f46e5;font-family:monospace">{req.PatientId}</span></div>
+                  <div class="row"><span class="key">Appointment</span><span class="val" style="color:#4f46e5;font-family:monospace">{req.AppointmentId}</span></div>
                   <div class="row"><span class="key">Doctor</span><span class="val">{req.DoctorName}</span></div>
                   <div class="row"><span class="key">Department</span><span class="val">{req.Specialty}</span></div>
                   <div class="row"><span class="key">Location</span><span class="val">{req.Floor} &middot; {req.Room}</span></div>
                   <div class="row"><span class="key">Priority</span><span class="val" style="color:{urgencyColor}">{req.Urgency}</span></div>
+                  <div class="row"><span class="key">Symptoms</span><span class="val" style="color:#c7c7d4;font-weight:500">{req.Symptoms}</span></div>
                 </div>
                 <div class="ai">
                   <strong style="color:#A1A1AA;font-size:11px;text-transform:uppercase;letter-spacing:0.05em">AI Recommendation</strong><br><br>

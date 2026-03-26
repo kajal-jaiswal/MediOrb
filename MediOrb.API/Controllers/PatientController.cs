@@ -68,9 +68,21 @@ public class PatientController(
 
         if (changed)
         {
+            // Update doctors (queue status)
             await hubContext.Clients.Group("doctors").SendAsync(
                 "PatientStatusUpdated",
                 new { appointmentId, status = req.Status, patientName = appt.Patient?.Name ?? string.Empty });
+
+            // 📢 INNOVATION: If called by doctor, broadcast to KIOSK for voice paging
+            if (req.Status == "InProgress")
+            {
+                await hubContext.Clients.All.SendAsync("PatientCalled", new
+                {
+                    patientName = appt.Patient?.Name ?? "Patient",
+                    doctorName  = appt.DoctorName,
+                    room        = appt.Room
+                });
+            }
 
             logger.LogInformation("Status → {Status} for {AppointmentId}", req.Status, appointmentId);
         }

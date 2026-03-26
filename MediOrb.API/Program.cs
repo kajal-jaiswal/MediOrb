@@ -12,9 +12,12 @@ var allowedOrigins = builder.Configuration
 
 builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
-        policy.AllowAnyOrigin()
+        policy.SetIsOriginAllowed(origin =>
+                  origin == "http://localhost:4200" ||
+                  origin == "https://kj-mediorb.vercel.app")
               .AllowAnyHeader()
-              .AllowAnyMethod()));
+              .AllowAnyMethod()
+              .AllowCredentials()));
 
 // ── SQLite + EF Core ──────────────────────────────────────────
 var connStr = builder.Configuration.GetConnectionString("Default") ?? "Data Source=mediOrb.db";

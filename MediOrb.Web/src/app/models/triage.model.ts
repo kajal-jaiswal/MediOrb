@@ -13,4 +13,7 @@ export interface TriageResult {
   reasoning: string;
   suggestedTests: string[];
   additionalNotes?: string;
+  // Phase B additions — optional, backend may not always return these
+  confidence?:       number;
+  primaryCondition?: string;
 }

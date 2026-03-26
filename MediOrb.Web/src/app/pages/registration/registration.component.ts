@@ -31,6 +31,7 @@ export class RegistrationComponent {
     gender:  ['male', Validators.required],
     contact: ['', [Validators.required, phoneValidator]],
     email:   ['', Validators.email],
+    consent: [false, Validators.requiredTrue],
   });
 
   submitted = false;
@@ -43,7 +44,7 @@ export class RegistrationComponent {
 
   get f() { return this.form.controls; }
 
-  fieldError(field: 'name' | 'age' | 'gender' | 'contact' | 'email'): string {
+  fieldError(field: 'name' | 'age' | 'gender' | 'contact' | 'email' | 'consent'): string {
     if (!this.submitted || !this.f[field].errors) return '';
     const e = this.f[field].errors!;
     if (field === 'name') {
@@ -60,6 +61,7 @@ export class RegistrationComponent {
       if (e['phone'])      return 'Enter a valid 10-digit mobile number starting with 6–9.';
     }
     if (field === 'email' && e['email']) return 'Enter a valid email address.';
+    if (field === 'consent' && e['required']) return 'You must consent to proceed.';
     return '';
   }
 
