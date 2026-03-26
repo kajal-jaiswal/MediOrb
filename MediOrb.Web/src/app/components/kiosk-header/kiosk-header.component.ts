@@ -1,6 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { ThemeService, THEME_OPTIONS } from '../../services/theme.service';
 
 @Component({
   selector: 'app-kiosk-header',
@@ -15,6 +16,7 @@ import { RouterLink } from '@angular/router';
           <span class="brand-sub">AI Hospital Kiosk</span>
         </div>
       </div>
+
       <div class="header-right">
         <div class="status-dot"></div>
         <span class="status-text">Online</span>
@@ -24,12 +26,29 @@ import { RouterLink } from '@angular/router';
           &#128084; Doctor
         </a>
 
-        <button class="hdr-btn hcm-btn"
-                [class.hcm-active]="hcm"
-                (click)="toggleHCM()"
-                title="Toggle High Contrast Mode (Accessibility)">
-          &#9788; HC
-        </button>
+        <!-- Theme switcher — click-based, closes on outside click -->
+        <div class="theme-wrap" (click)="$event.stopPropagation()">
+          <button class="hdr-btn theme-btn"
+                  [class.theme-btn-open]="menuOpen()"
+                  (click)="menuOpen.set(!menuOpen())"
+                  title="Switch theme">
+            <span class="theme-icon">{{ themeService.currentOption.icon }}</span>
+            <span class="theme-label">Theme</span>
+            <span class="theme-caret" [class.caret-open]="menuOpen()">▾</span>
+          </button>
+
+          <div class="theme-menu" [class.theme-menu-open]="menuOpen()">
+            <div class="menu-header">Choose Theme</div>
+            <button *ngFor="let t of themes"
+                    class="theme-opt"
+                    [class.theme-opt-active]="t.id === themeService.current()"
+                    (click)="pickTheme(t.id)">
+              <span class="theme-opt-icon">{{ t.icon }}</span>
+              <span class="theme-opt-label">{{ t.label }}</span>
+              <span *ngIf="t.id === themeService.current()" class="theme-check">✓</span>
+            </button>
+          </div>
+        </div>
 
         <span class="poc-badge">POC v2.0</span>
       </div>
@@ -37,66 +56,143 @@ import { RouterLink } from '@angular/router';
   `,
   styles: [`
     .kiosk-header {
-      position:fixed; top:0; left:0; right:0; z-index:50;
-      display:flex; align-items:center; justify-content:space-between;
-      padding:12px 24px;
-      background:rgba(10,15,28,0.75);
-      backdrop-filter:blur(20px);
-      border-bottom:1px solid rgba(255,255,255,0.06);
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 24px;
+      background: var(--header-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--header-border);
     }
-    .brand { display:flex; align-items:center; gap:10px; }
-    .logo-mark {
-      width:28px; height:28px; border-radius:8px;
-      background:linear-gradient(135deg,#6366F1,#8B5CF6);
-      display:flex; align-items:center; justify-content:center;
-      font-weight:900; font-size:13px; color:white;
+
+    /* ── Brand ───────────────────────────── */
+    .brand      { display: flex; align-items: center; gap: 10px; }
+    .logo-mark  {
+      width: 30px; height: 30px; border-radius: 8px;
+      background: var(--gradient);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 14px; color: white;
+      flex-shrink: 0;
     }
-    .brand-text { display:flex; flex-direction:column; line-height:1; }
-    .brand-name { font-weight:700; font-size:14px; color:white; }
-    .brand-sub  { font-size:10px; color:#A1A1AA; margin-top:2px; }
-    .header-right { display:flex; align-items:center; gap:8px; }
-    .status-dot { width:6px; height:6px; border-radius:50%; background:#10B981; }
-    .status-text { font-size:11px; color:#10B981; font-weight:600; }
-    .clock { font-size:11px; color:#A1A1AA; font-family:monospace; }
+    .brand-text  { display: flex; flex-direction: column; line-height: 1; }
+    .brand-name  { font-weight: 700; font-size: 14px; color: var(--text-primary); }
+    .brand-sub   { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+    /* ── Header right ────────────────────── */
+    .header-right { display: flex; align-items: center; gap: 8px; }
+    .status-dot   { width: 6px; height: 6px; border-radius: 50%; background: var(--success); flex-shrink: 0; }
+    .status-text  { font-size: 11px; color: var(--success); font-weight: 600; }
+    .clock        { font-size: 11px; color: var(--text-muted); font-family: monospace; }
+
+    /* ── Shared button style ─────────────── */
     .hdr-btn {
-      font-size:11px; font-weight:600; color:#A1A1AA;
-      padding:4px 10px; border-radius:8px; cursor:pointer;
-      background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08);
-      text-decoration:none; display:inline-flex; align-items:center; gap:4px;
-      transition:all 0.15s; font-family:inherit;
+      font-size: 11px; font-weight: 600; color: var(--text-muted);
+      padding: 5px 11px; border-radius: 8px; cursor: pointer;
+      background: var(--surface-1); border: 1px solid var(--border-subtle);
+      text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      font-family: inherit; white-space: nowrap;
     }
-    .hdr-btn:hover { background:rgba(255,255,255,0.09); color:white; }
-    .doc-btn { color:#818CF8; border-color:rgba(99,102,241,0.25); }
-    .hcm-btn { color:#A1A1AA; }
-    .hcm-active { background:rgba(255,255,255,0.14) !important; color:white !important; border-color:rgba(255,255,255,0.3) !important; }
+    .hdr-btn:hover { background: var(--surface-2); color: var(--text-primary); border-color: var(--border); }
+    .doc-btn { color: var(--accent); border-color: var(--border); }
+
+    /* ── Theme switcher ──────────────────── */
+    .theme-wrap  { position: relative; }
+    .theme-btn   { color: var(--accent); border-color: var(--border); gap: 5px; }
+    .theme-btn-open {
+      background: var(--surface-2) !important;
+      border-color: var(--border-hover) !important;
+      color: var(--text-primary) !important;
+    }
+    .theme-icon  { font-size: 13px; line-height: 1; }
+    .theme-label { font-size: 11px; }
+    .theme-caret { font-size: 10px; transition: transform 0.2s ease; display: inline-block; }
+    .caret-open  { transform: rotate(180deg); }
+
+    /* Dropdown panel */
+    .theme-menu {
+      display: none;
+      position: absolute; top: calc(100% + 8px); right: 0;
+      background: var(--header-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 8px;
+      min-width: 178px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
+      z-index: 200;
+      animation: menu-in 0.15s ease;
+    }
+    @keyframes menu-in {
+      from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0)    scale(1); }
+    }
+    .theme-menu-open { display: flex; flex-direction: column; gap: 2px; }
+
+    .menu-header {
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--text-faint);
+      padding: 4px 10px 6px; user-select: none;
+    }
+
+    .theme-opt {
+      display: flex; align-items: center; gap: 9px;
+      padding: 8px 10px; border-radius: 9px;
+      font-size: 12px; font-weight: 600;
+      color: var(--text-muted); background: none;
+      border: none; cursor: pointer; font-family: inherit;
+      transition: background 0.12s, color 0.12s;
+      white-space: nowrap; width: 100%; text-align: left;
+    }
+    .theme-opt:hover { background: var(--surface-2); color: var(--text-primary); }
+    .theme-opt-active { background: var(--surface-2); color: var(--accent); }
+    .theme-opt-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+    .theme-opt-label { flex: 1; }
+    .theme-check { font-size: 11px; font-weight: 700; color: var(--accent); flex-shrink: 0; }
+
+    /* ── Badge ───────────────────────────── */
     .poc-badge {
-      font-size:10px; font-weight:700; color:#818CF8;
-      padding:3px 8px; border-radius:6px;
-      background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.25);
+      font-size: 10px; font-weight: 700; color: var(--accent);
+      padding: 3px 9px; border-radius: 6px;
+      background: var(--surface-2); border: 1px solid var(--border);
+    }
+
+    /* ── Responsive ─────────────────────── */
+    @media (max-width: 640px) {
+      .kiosk-header { padding: 10px 14px; }
+      .status-text, .clock, .poc-badge { display: none; }
+      .theme-label { display: none; }
     }
   `],
 })
 export class KioskHeaderComponent implements OnInit, OnDestroy {
   clockStr = '';
-  hcm      = false;
+  readonly menuOpen = signal(false);
+  readonly themes   = THEME_OPTIONS;
+
   private timer: ReturnType<typeof setInterval> | null = null;
+
+  constructor(readonly themeService: ThemeService) {}
 
   ngOnInit(): void {
     this.updateClock();
     this.timer = setInterval(() => this.updateClock(), 1000);
-    // Restore persisted preference
-    this.hcm = localStorage.getItem('mediOrb_hcm') === '1';
-    document.body.classList.toggle('hc', this.hcm);
   }
 
   ngOnDestroy(): void {
     if (this.timer) clearInterval(this.timer);
   }
 
-  toggleHCM(): void {
-    this.hcm = !this.hcm;
-    document.body.classList.toggle('hc', this.hcm);
-    localStorage.setItem('mediOrb_hcm', this.hcm ? '1' : '0');
+  /** Close menu when clicking anywhere outside the theme-wrap */
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.menuOpen.set(false);
+  }
+
+  pickTheme(id: import('../../services/theme.service').Theme): void {
+    this.themeService.set(id);
+    this.menuOpen.set(false);
   }
 
   private updateClock(): void {

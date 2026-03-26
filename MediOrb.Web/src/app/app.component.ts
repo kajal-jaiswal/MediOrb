@@ -1,4 +1,4 @@
-import { Component, computed } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { filter, map } from 'rxjs';
@@ -6,6 +6,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { KioskHeaderComponent } from './components/kiosk-header/kiosk-header.component';
 import { SignalrService } from './services/signalr.service';
 import { SpeechService } from './services/speech.service';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -29,12 +30,14 @@ export class AppComponent {
   constructor(
     private router: Router,
     private signalr: SignalrService,
-    private speech: SpeechService
+    private speech: SpeechService,
+    // Injected here so the theme is applied before any child component renders
+    _theme: ThemeService,
   ) {
     // Connect globally so we can hear "Now calling..." pages anywhere
     this.signalr.connect();
 
-    // 📢 INNOVATION: Listen for doctors calling patients
+    // Listen for doctors calling patients
     this.signalr.patientCalled$.subscribe(info => {
       // Don't announce if the doctor is currently looking at their own dashboard
       if (this.router.url.startsWith('/doctor')) return;

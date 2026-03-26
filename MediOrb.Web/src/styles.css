@@ -1,31 +1,70 @@
 /* ═══════════════════════════════════════════════════
-   MediOrb — Smart Mirror Design System
-   Deep Indigo / Teal · Glassmorphism · Enterprise
+   MediOrb — Premium Hospital UI Design System
+   5 Professional Themes · Glassmorphism · Enterprise
    ═══════════════════════════════════════════════════ */
 
-/* ─── Design Tokens ──────────────────────────────── */
+/* ─── Design Tokens — Medical Green (default) ────── */
 :root {
-  --bg-base:        #020817;
-  --bg-card:        rgba(8, 16, 40, 0.70);
-  --border:         rgba(99, 102, 241, 0.13);
-  --border-hover:   rgba(99, 102, 241, 0.28);
-  --border-active:  rgba(99, 102, 241, 0.55);
-  --text-primary:   #f1f5f9;
-  --text-muted:     #94a3b8;
-  --text-faint:     #475569;
-  --accent:         #6366f1;
-  --accent-2:       #14b8a6;
-  --accent-light:   #818cf8;
-  --accent-glow:    rgba(99, 102, 241, 0.22);
-  --teal-glow:      rgba(20, 184, 166, 0.18);
-  --success:        #10b981;
-  --error:          #ef4444;
-  --gradient:       linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #14b8a6 100%);
-  --gradient-soft:  linear-gradient(135deg, rgba(99,102,241,0.18), rgba(20,184,166,0.12));
+  /* Backgrounds */
+  --bg-base:        #f0fdf4;
+  --bg-card:        rgba(255, 255, 255, 0.70);
+  --surface-1:      rgba(0, 0, 0, 0.03);
+  --surface-2:      rgba(0, 0, 0, 0.06);
+  --surface-3:      rgba(0, 0, 0, 0.10);
+
+  /* Borders */
+  --border:         rgba(22, 163, 74, 0.22);
+  --border-hover:   rgba(22, 163, 74, 0.42);
+  --border-active:  rgba(22, 163, 74, 0.68);
+  --border-subtle:  rgba(0, 0, 0, 0.08);
+
+  /* Text */
+  --text-primary:   #064e3b;
+  --text-muted:     #166534;
+  --text-faint:     #4b7c5e;
+  --text-disabled:  #86efac;
+
+  /* Accents */
+  --accent:         #16a34a;
+  --accent-2:       #22c55e;
+  --accent-light:   #15803d;
+  --accent-glow:    rgba(22, 163, 74, 0.18);
+  --teal-glow:      rgba(34, 197, 94, 0.14);
+
+  /* Semantic */
+  --success:        #16a34a;
+  --error:          #dc2626;
+  --warning:        #d97706;
+
+  /* Glass */
+  --glass-shadow:   0 8px 32px rgba(0, 0, 0, 0.08);
+
+  /* Gradients */
+  --gradient:       linear-gradient(135deg, #16a34a 0%, #22c55e 60%, #4ade80 100%);
+  --gradient-soft:  linear-gradient(135deg, rgba(22,163,74,0.15), rgba(34,197,94,0.10));
+
+  /* Header */
+  --header-bg:      rgba(240, 253, 244, 0.88);
+  --header-border:  rgba(0, 0, 0, 0.08);
+
+  /* Inputs */
+  --input-bg:       rgba(255, 255, 255, 0.70);
+  --input-bg-focus: rgba(255, 255, 255, 0.97);
+  --select-bg:      #ffffff;
 }
 
-/* ─── Reset ─────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ─── Reset + Smooth Theme Transitions ───────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  /* Theme color transitions — skips transform/opacity so animations are unaffected */
+  transition:
+    background-color 0.3s ease,
+    color            0.3s ease,
+    border-color     0.3s ease,
+    box-shadow       0.3s ease;
+}
 html { scroll-behavior: smooth; }
 body {
   background: var(--bg-base);
@@ -37,28 +76,28 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── Smart Mirror Background (animated) ─────────── */
+/* ─── Background Scene (themed) ──────────────────── */
 .bg-scene {
   position: fixed;
   inset: 0;
   z-index: -1;
   overflow: hidden;
+  /* Default: Medical Green — overridden per theme below */
   background:
-    radial-gradient(ellipse 85% 65% at 5%  0%,   rgba(99,102,241,0.18)  0%, transparent 55%),
-    radial-gradient(ellipse 55% 45% at 95% 100%,  rgba(20,184,166,0.13)  0%, transparent 55%),
-    radial-gradient(ellipse 50% 40% at 50% 50%,   rgba(139,92,246,0.07)  0%, transparent 65%),
-    radial-gradient(ellipse 30% 30% at 80%  20%,  rgba(20,184,166,0.06)  0%, transparent 55%),
-    #020817;
+    radial-gradient(ellipse 85% 65% at 5%   0%,  rgba(22,163,74,0.12)  0%, transparent 55%),
+    radial-gradient(ellipse 55% 45% at 95% 100%,  rgba(34,197,94,0.08)  0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50% 50%,   rgba(16,185,129,0.05) 0%, transparent 65%),
+    #f0fdf4;
 }
 
 /* Drifting grid overlay */
 .bg-scene::after {
   content: '';
   position: absolute;
-  inset: -48px;            /* extend beyond edges so drift doesn't show gaps */
+  inset: -48px;
   background-image:
-    linear-gradient(rgba(99,102,241,0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99,102,241,0.035) 1px, transparent 1px);
+    linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
   background-size: 48px 48px;
   animation: grid-drift 24s linear infinite;
   mask-image: radial-gradient(ellipse 85% 85% at 50% 50%, black 0%, transparent 100%);
@@ -73,7 +112,7 @@ body {
   width: 700px;
   height: 700px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(99,102,241,0.055) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(22,163,74,0.06) 0%, transparent 70%);
   top: -250px;
   left: -200px;
   animation: orb-float 22s ease-in-out infinite;
@@ -91,30 +130,25 @@ body {
   66%       { transform: translate(-50px, 110px) scale(0.94); }
 }
 
-/* ─── Smart Mirror Glass ─────────────────────────── */
+/* ─── Glass Card ─────────────────────────────────── */
 .glass {
-  background: linear-gradient(
-    145deg,
-    rgba(255,255,255,0.058) 0%,
-    rgba(99,102,241,0.030) 45%,
-    rgba(20,184,166,0.018) 100%
-  );
+  background: var(--bg-card, rgba(255,255,255,0.70));
   border: 1px solid var(--border);
-  backdrop-filter: blur(32px) saturate(160%) brightness(105%);
-  -webkit-backdrop-filter: blur(32px) saturate(160%) brightness(105%);
+  backdrop-filter: blur(16px) saturate(150%) brightness(102%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%) brightness(102%);
   border-radius: 20px;
   box-shadow:
-    0 8px 40px rgba(0,0,0,0.45),
-    inset 0 1px 0 rgba(255,255,255,0.07),
-    inset 0 -1px 0 rgba(0,0,0,0.10);
+    var(--glass-shadow),
+    inset 0 1px 0 rgba(255,255,255,0.60),
+    inset 0 -1px 0 rgba(0,0,0,0.04);
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 .glass:hover {
   border-color: var(--border-hover);
   box-shadow:
-    0 12px 48px rgba(0,0,0,0.5),
-    inset 0 1px 0 rgba(255,255,255,0.09),
-    0 0 0 1px rgba(99,102,241,0.06);
+    var(--glass-shadow),
+    inset 0 1px 0 rgba(255,255,255,0.80),
+    0 0 0 1px var(--accent-glow);
 }
 
 /* ─── Buttons ────────────────────────────────────── */
@@ -139,7 +173,7 @@ body {
 .btn:active:not(:disabled) { transform: scale(0.97); }
 
 .btn-primary {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #14b8a6 100%);
+  background: var(--gradient);
   background-size: 200% 200%;
   animation: gradient-shift 6s ease infinite;
   box-shadow:
@@ -182,7 +216,7 @@ body {
 
 .field-input {
   width: 100%;
-  background: rgba(8, 16, 40, 0.5);
+  background: var(--input-bg);
   border: 1px solid var(--border);
   color: var(--text-primary);
   border-radius: 12px;
@@ -199,7 +233,7 @@ body {
 .field-input:focus {
   border-color: var(--border-active);
   box-shadow: 0 0 0 3px var(--accent-glow);
-  background: rgba(8, 16, 50, 0.7);
+  background: var(--input-bg-focus);
 }
 .field-input::placeholder { color: rgba(148,163,184,0.38); }
 .field-input.is-error {
@@ -222,7 +256,7 @@ body {
 }
 
 /* ─── Select ─────────────────────────────────────── */
-option { background: #0d1635; color: white; }
+option { background: var(--select-bg); color: var(--text-primary); }
 select.field-input { padding-left: 16px; cursor: pointer; }
 
 /* ─── Layout helpers ─────────────────────────────── */
@@ -251,7 +285,7 @@ select.field-input { padding-left: 16px; cursor: pointer; }
   padding: 14px 16px 20px;
   font-size: 12px;
   color: var(--text-faint);
-  border-top: 1px solid rgba(255,255,255,0.04);
+  border-top: 1px solid var(--header-border);
   letter-spacing: 0.02em;
 }
 
@@ -293,44 +327,224 @@ select.field-input { padding-left: 16px; cursor: pointer; }
   to   { opacity: 1; transform: translateY(0);    }
 }
 
-/* ─── High Contrast Mode ─────────────────────────── */
+/* ═══════════════════════════════════════════════════
+   PREMIUM THEME SYSTEM — 5 Hospital-Grade Themes
+   Applied via body.theme-* class
+   ═══════════════════════════════════════════════════ */
+
+/* ── 1. Medical Green (default — vars already in :root) */
+body.theme-green { /* inherits :root — no overrides needed */ }
+
+/* ── 2. Medical Blue ───────────────────────────── */
+body.theme-blue {
+  --bg-base:        #eff6ff;
+  --bg-card:        rgba(255, 255, 255, 0.72);
+  --surface-1:      rgba(0, 0, 0, 0.03);
+  --surface-2:      rgba(0, 0, 0, 0.06);
+  --surface-3:      rgba(0, 0, 0, 0.10);
+  --border:         rgba(37, 99, 235, 0.22);
+  --border-hover:   rgba(37, 99, 235, 0.42);
+  --border-active:  rgba(37, 99, 235, 0.70);
+  --border-subtle:  rgba(0, 0, 0, 0.08);
+  --text-primary:   #1e3a8a;
+  --text-muted:     #1d4ed8;
+  --text-faint:     #3b6fcc;
+  --text-disabled:  #93c5fd;
+  --accent:         #2563eb;
+  --accent-2:       #3b82f6;
+  --accent-light:   #1d4ed8;
+  --accent-glow:    rgba(37, 99, 235, 0.18);
+  --teal-glow:      rgba(59, 130, 246, 0.14);
+  --success:        #16a34a;
+  --error:          #dc2626;
+  --warning:        #d97706;
+  --gradient:       linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
+  --gradient-soft:  linear-gradient(135deg, rgba(37,99,235,0.15), rgba(59,130,246,0.10));
+  --header-bg:      rgba(239, 246, 255, 0.90);
+  --header-border:  rgba(0, 0, 0, 0.08);
+  --input-bg:       rgba(255, 255, 255, 0.72);
+  --input-bg-focus: rgba(255, 255, 255, 0.97);
+  --select-bg:      #ffffff;
+  --glass-shadow:   0 8px 32px rgba(0, 0, 0, 0.08);
+}
+body.theme-blue .bg-scene {
+  background:
+    radial-gradient(ellipse 85% 65% at 5%   0%,  rgba(37,99,235,0.12)  0%, transparent 55%),
+    radial-gradient(ellipse 55% 45% at 95% 100%,  rgba(59,130,246,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50% 50%,   rgba(30,58,138,0.05)  0%, transparent 65%),
+    #eff6ff;
+}
+
+/* ── 3. Warm Yellow ────────────────────────────── */
+body.theme-yellow {
+  --bg-base:        #fffbeb;
+  --bg-card:        rgba(255, 255, 255, 0.75);
+  --surface-1:      rgba(0, 0, 0, 0.03);
+  --surface-2:      rgba(0, 0, 0, 0.06);
+  --surface-3:      rgba(0, 0, 0, 0.10);
+  --border:         rgba(234, 179, 8, 0.28);
+  --border-hover:   rgba(234, 179, 8, 0.50);
+  --border-active:  rgba(234, 179, 8, 0.75);
+  --border-subtle:  rgba(0, 0, 0, 0.08);
+  --text-primary:   #78350f;
+  --text-muted:     #92400e;
+  --text-faint:     #b45309;
+  --text-disabled:  #fbbf24;
+  --accent:         #eab308;
+  --accent-2:       #facc15;
+  --accent-light:   #b45309;
+  --accent-glow:    rgba(234, 179, 8, 0.20);
+  --teal-glow:      rgba(250, 204, 21, 0.15);
+  --success:        #16a34a;
+  --error:          #dc2626;
+  --warning:        #d97706;
+  --gradient:       linear-gradient(135deg, #b45309 0%, #eab308 55%, #facc15 100%);
+  --gradient-soft:  linear-gradient(135deg, rgba(234,179,8,0.18), rgba(250,204,21,0.12));
+  --header-bg:      rgba(255, 251, 235, 0.90);
+  --header-border:  rgba(0, 0, 0, 0.08);
+  --input-bg:       rgba(255, 255, 255, 0.72);
+  --input-bg-focus: rgba(255, 255, 255, 0.97);
+  --select-bg:      #ffffff;
+  --glass-shadow:   0 8px 32px rgba(0, 0, 0, 0.08);
+}
+body.theme-yellow .bg-scene {
+  background:
+    radial-gradient(ellipse 85% 65% at 5%   0%,  rgba(234,179,8,0.12)  0%, transparent 55%),
+    radial-gradient(ellipse 55% 45% at 95% 100%,  rgba(250,204,21,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50% 50%,   rgba(180,83,9,0.04)   0%, transparent 65%),
+    #fffbeb;
+}
+
+/* ── 4. Violet Premium ─────────────────────────── */
+body.theme-violet {
+  --bg-base:        #f5f3ff;
+  --bg-card:        rgba(255, 255, 255, 0.72);
+  --surface-1:      rgba(0, 0, 0, 0.03);
+  --surface-2:      rgba(0, 0, 0, 0.06);
+  --surface-3:      rgba(0, 0, 0, 0.10);
+  --border:         rgba(124, 58, 237, 0.22);
+  --border-hover:   rgba(124, 58, 237, 0.42);
+  --border-active:  rgba(124, 58, 237, 0.70);
+  --border-subtle:  rgba(0, 0, 0, 0.08);
+  --text-primary:   #4c1d95;
+  --text-muted:     #5b21b6;
+  --text-faint:     #7c3aed;
+  --text-disabled:  #c4b5fd;
+  --accent:         #7c3aed;
+  --accent-2:       #8b5cf6;
+  --accent-light:   #5b21b6;
+  --accent-glow:    rgba(124, 58, 237, 0.18);
+  --teal-glow:      rgba(139, 92, 246, 0.14);
+  --success:        #16a34a;
+  --error:          #dc2626;
+  --warning:        #d97706;
+  --gradient:       linear-gradient(135deg, #4c1d95 0%, #7c3aed 55%, #8b5cf6 100%);
+  --gradient-soft:  linear-gradient(135deg, rgba(124,58,237,0.16), rgba(139,92,246,0.10));
+  --header-bg:      rgba(245, 243, 255, 0.90);
+  --header-border:  rgba(0, 0, 0, 0.08);
+  --input-bg:       rgba(255, 255, 255, 0.72);
+  --input-bg-focus: rgba(255, 255, 255, 0.97);
+  --select-bg:      #ffffff;
+  --glass-shadow:   0 8px 32px rgba(0, 0, 0, 0.08);
+}
+body.theme-violet .bg-scene {
+  background:
+    radial-gradient(ellipse 85% 65% at 5%   0%,  rgba(124,58,237,0.11)  0%, transparent 55%),
+    radial-gradient(ellipse 55% 45% at 95% 100%,  rgba(139,92,246,0.08)  0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50% 50%,   rgba(76,29,149,0.05)   0%, transparent 65%),
+    #f5f3ff;
+}
+
+/* ── 5. Mustard Dark ───────────────────────────── */
+body.theme-mustard {
+  --bg-base:        #0f0f0f;
+  --bg-card:        rgba(30, 30, 30, 0.72);
+  --surface-1:      rgba(255, 255, 255, 0.04);
+  --surface-2:      rgba(255, 255, 255, 0.07);
+  --surface-3:      rgba(255, 255, 255, 0.11);
+  --border:         rgba(245, 158, 11, 0.28);
+  --border-hover:   rgba(245, 158, 11, 0.48);
+  --border-active:  rgba(245, 158, 11, 0.75);
+  --border-subtle:  rgba(255, 255, 255, 0.07);
+  --text-primary:   #f3f4f6;
+  --text-muted:     #d1d5db;
+  --text-faint:     #9ca3af;
+  --text-disabled:  #6b7280;
+  --accent:         #d97706;
+  --accent-2:       #f59e0b;
+  --accent-light:   #fbbf24;
+  --accent-glow:    rgba(217, 119, 6, 0.28);
+  --teal-glow:      rgba(245, 158, 11, 0.18);
+  --success:        #22c55e;
+  --error:          #f87171;
+  --warning:        #fbbf24;
+  --gradient:       linear-gradient(135deg, #92400e 0%, #d97706 55%, #f59e0b 100%);
+  --gradient-soft:  linear-gradient(135deg, rgba(217,119,6,0.20), rgba(245,158,11,0.12));
+  --header-bg:      rgba(15, 15, 15, 0.90);
+  --header-border:  rgba(245, 158, 11, 0.15);
+  --input-bg:       rgba(30, 30, 30, 0.60);
+  --input-bg-focus: rgba(40, 40, 40, 0.85);
+  --select-bg:      #1e1e1e;
+  --glass-shadow:   0 8px 40px rgba(0, 0, 0, 0.55);
+}
+body.theme-mustard .bg-scene {
+  background:
+    radial-gradient(ellipse 85% 65% at 5%   0%,  rgba(217,119,6,0.15)  0%, transparent 55%),
+    radial-gradient(ellipse 55% 45% at 95% 100%,  rgba(245,158,11,0.10) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50% 50%,   rgba(146,64,14,0.07)  0%, transparent 65%),
+    #0f0f0f;
+}
+body.theme-mustard .glass {
+  background: rgba(30, 30, 30, 0.72);
+  backdrop-filter: blur(16px) saturate(130%);
+  -webkit-backdrop-filter: blur(16px) saturate(130%);
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 1px 0 rgba(255,255,255,0.07),
+    inset 0 -1px 0 rgba(0,0,0,0.20);
+}
+body.theme-mustard .glass:hover {
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 1px 0 rgba(255,255,255,0.10),
+    0 0 0 1px rgba(217,119,6,0.15);
+}
+body.theme-mustard .bg-scene::after {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+}
+
+/* ─── Legacy body.hc (kept for backwards compat) ── */
 body.hc {
   --bg-base:        #000000;
-  --bg-card:        rgba(255,255,255,0.07);
-  --border:         rgba(255,255,255,0.28);
-  --border-hover:   rgba(255,255,255,0.45);
+  --bg-card:        rgba(255, 255, 255, 0.07);
+  --border:         rgba(255, 255, 255, 0.28);
+  --border-hover:   rgba(255, 255, 255, 0.45);
   --border-active:  #ffffff;
   --text-primary:   #ffffff;
   --text-muted:     #d1d5db;
   --text-faint:     #9ca3af;
   --accent:         #ffffff;
   --accent-light:   #e5e7eb;
-  --accent-glow:    rgba(255,255,255,0.12);
+  --accent-glow:    rgba(255, 255, 255, 0.12);
+  --surface-1:      rgba(255, 255, 255, 0.04);
+  --surface-2:      rgba(255, 255, 255, 0.08);
+  --header-bg:      rgba(0, 0, 0, 0.90);
+  --header-border:  rgba(255, 255, 255, 0.15);
+  --input-bg:       rgba(255, 255, 255, 0.06);
+  --input-bg-focus: rgba(255, 255, 255, 0.10);
+  --select-bg:      #000000;
+  --glass-shadow:   0 8px 40px rgba(0, 0, 0, 0.70);
 }
 body.hc .glass {
-  background: rgba(255,255,255,0.05);
-  border-color: rgba(255,255,255,0.25);
-  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 body.hc .btn-primary {
   background: #ffffff;
   color: #000000;
   animation: none;
-  box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
-}
-body.hc .btn-ghost {
-  border-color: rgba(255,255,255,0.35);
-  color: #d1d5db;
-}
-body.hc .field-input {
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.28);
-  color: #ffffff;
-  font-size: 16px;
-}
-body.hc .field-input:focus {
-  border-color: #ffffff;
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.15);
 }
 
 /* ─── Responsive — Mobile Perfect ───────────────── */
